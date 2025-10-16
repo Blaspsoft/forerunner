@@ -2,6 +2,7 @@
 
 namespace Blaspsoft\Forerunner;
 
+use Blaspsoft\Forerunner\Commands\MakeStructCommand;
 use Blaspsoft\Forerunner\Schemas\Struct;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +32,10 @@ class ForerunnerServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/forerunner.php' => config_path('forerunner.php'),
             ], 'forerunner-config');
+
+            $this->commands([
+                MakeStructCommand::class,
+            ]);
         }
     }
 }

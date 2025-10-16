@@ -1,0 +1,46 @@
+<?php
+
+namespace {{ namespace }};
+
+use Blaspsoft\Forerunner\Schemas\Struct;
+use Blaspsoft\Forerunner\Schemas\Builder;
+
+class {{ class }}
+{
+    /**
+     * Define the structure schema.
+     *
+     * @return array
+     */
+    public static function schema(): array
+    {
+        return Struct::define('{{ structName }}', function (Builder $table) {
+            $table->string('example_field')->required();
+            // Add your fields here
+        });
+    }
+
+    /**
+     * Get the schema as JSON string.
+     *
+     * @return string
+     */
+    public static function toJson(): string
+    {
+        return json_encode(static::schema(), JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * Get the schema with a custom name.
+     *
+     * @param string $name
+     * @return array
+     */
+    public static function named(string $name): array
+    {
+        return Struct::define($name, function (Builder $table) {
+            $table->string('example_field')->required();
+            // Add your fields here
+        });
+    }
+}
