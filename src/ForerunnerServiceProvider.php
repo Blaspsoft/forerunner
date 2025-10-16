@@ -2,6 +2,7 @@
 
 namespace Blaspsoft\Forerunner;
 
+use Blaspsoft\Forerunner\Schemas\Struct;
 use Illuminate\Support\ServiceProvider;
 
 class ForerunnerServiceProvider extends ServiceProvider
@@ -15,6 +16,10 @@ class ForerunnerServiceProvider extends ServiceProvider
             __DIR__.'/../config/forerunner.php',
             'forerunner'
         );
+
+        $this->app->bind('forerunner.schema', function () {
+            return new Struct;
+        });
     }
 
     /**

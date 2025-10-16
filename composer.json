@@ -47,7 +47,10 @@
         "laravel": {
             "providers": [
                 "Blaspsoft\\Forerunner\\ForerunnerServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Schema": "Blaspsoft\\Forerunner\\Facades\\Schema"
+            }
         }
     },
     "minimum-stability": "stable",
