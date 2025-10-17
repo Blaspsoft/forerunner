@@ -4,6 +4,20 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.1.2 - 2024-10-17
+
+### Changed
+- **IMPORTANT**: `additionalProperties` now defaults to `false` and is always included in schema output
+  - Required by LLM APIs (OpenAI, Anthropic) for structured output
+  - Provides stricter validation by default
+  - Can still be enabled with `additionalProperties(true)` if needed
+- Stub file now uses `$builder` variable instead of `$table` for better clarity
+
+### Technical Details
+- 119 tests passing with 400 assertions
+- PHPStan Level 9 compliance maintained
+- All schemas now explicitly include `"additionalProperties": false`
+
 ## 0.1.1 - 2024-10-17
 
 ### Added
