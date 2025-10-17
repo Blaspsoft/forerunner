@@ -51,10 +51,12 @@ class UserProfile
 {
     public static function schema(): array
     {
-        return Struct::define('user_profile', function (Property $table) {
-            $table->string('example_field')->required();
+        return Struct::define('user_profile', 'Description of user_profile', function (Property $property) {
+            $property->string('example_field');
             // Add your fields here
-        });
+
+            $property->strict(); // All fields required + no additional properties
+        })->toArray();
     }
 }
 ```
@@ -67,24 +69,24 @@ Define a schema using the `Struct` class or `Schema` facade:
 use Blaspsoft\Forerunner\Schema\Struct;
 use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Struct::define('User', function (Property $property) {
+$schema = Struct::define('User', 'A user schema', function (Property $property) {
     $property->string('name', 'The user\'s full name')->required();
     $property->string('email', 'The user\'s email address')->required();
     $property->int('age', 'The user\'s age')->min(0)->max(150);
     $property->boolean('is_active', 'Is the user account active?')->default(true);
-});
+})->toArray();
 ```
 
-Or using the facade:
+Or using the facade for a cleaner syntax:
 
 ```php
 use Blaspsoft\Forerunner\Facades\Schema;
 use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Schema::define('User', function (Property $property) {
-    $property->string('name')->required();
-    $property->string('email')->required();
-});
+$schema = Schema::define('User', 'A user schema', function (Property $property) {
+    $property->string('name', 'The user\'s full name')->required();
+    $property->string('email', 'The user\'s email address')->required();
+})->toArray();
 ```
 
 ## Available Field Types
@@ -307,14 +309,14 @@ The `strict()` method is particularly useful for LLM APIs like **OpenAI Structur
 
 ```php
 // Perfect for OpenAI Structured Outputs
-$schema = Struct::define('User', function (Property $property) {
+$schema = Struct::define('User', 'A user schema', function (Property $property) {
     $property->string('fullname');
     $property->email('email');
     $property->int('age')->min(0)->max(120);
     $property->string('location');
 
     $property->strict(); // Makes all fields required + disallows extra properties
-});
+})->toArray();
 ```
 
 This generates:
@@ -355,11 +357,10 @@ $property->string('email')
 use Blaspsoft\Forerunner\Schema\Struct;
 use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Struct::define('AdvancedUser', function (Property $property) {
+$schema = Struct::define('AdvancedUser', 'Comprehensive user data structure', function (Property $property) {
     // Schema metadata
     $property->schemaVersion();
     $property->title('Advanced User Schema');
-    $property->description('Comprehensive user data structure');
     $property->strict(); // Disallow additional properties
 
     // Helper methods
@@ -389,7 +390,7 @@ $schema = Struct::define('AdvancedUser', function (Property $property) {
         ->maxLength(30)
         ->pattern('^[a-zA-Z0-9_]+$')
         ->required();
-});
+})->toArray();
 ```
 
 This generates:
@@ -461,7 +462,7 @@ This generates:
 use Blaspsoft\Forerunner\Schema\Struct;
 use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Struct::define('UserProfile', function (Property $property) {
+$schema = Struct::define('UserProfile', 'A complete user profile schema', function (Property $property) {
     $property->string('name', 'The user\'s full name')
         ->minLength(1)
         ->maxLength(100)
@@ -493,13 +494,13 @@ $schema = Struct::define('UserProfile', function (Property $property) {
 
     $property->enum('role', ['admin', 'moderator', 'user'], 'User role')
         ->default('user');
-});
+})->toArray();
 ```
 
 ### Blog Post with Comments
 
 ```php
-$schema = Struct::define('BlogPost', function (Property $property) {
+$schema = Struct::define('BlogPost', 'A blog post with author and comments', function (Property $property) {
     $property->string('title')->required();
     $property->string('content')->required();
     $property->string('slug')->pattern('^[a-z0-9-]+$')->required();
@@ -523,69 +524,23 @@ $schema = Struct::define('BlogPost', function (Property $property) {
         ->default('draft');
 
     $property->int('views')->min(0)->default(0);
-});
+})->toArray();
 ```
 
 ## Working with Generated Schemas
 
-The `Struct::define()` method returns a `Struct` object that provides multiple ways to access your schema data.
-
-### Flexible API: Array Access + Object Methods
-
-Forerunner schemas support both array-like access and object methods for maximum flexibility:
-
-```php
-$schema = Struct::define('User', function (Property $property) {
-    $property->string('name')->required();
-    $property->string('email')->required();
-});
-
-// Access as an array (for backward compatibility)
-$type = $schema['type']; // 'object'
-$properties = $schema['properties']; // array of properties
-
-// Or use object methods for a fluent API
-$array = $schema->toArray();  // Get as PHP array
-$json = $schema->toJson();    // Get as JSON string
-
-// Method chaining works too!
-$json = Struct::define('User', function (Property $property) {
-    $property->string('name')->required();
-})->toJson();
-```
+The `Struct::define()` method returns a `Struct` object that can be converted to an array or JSON.
 
 ### Convert to Array
 
 ```php
-$schema = Struct::define('User', function (Property $property) {
+$struct = Struct::define('User', 'A user schema', function (Property $property) {
     $property->string('name')->required();
+    $property->string('email')->required();
 });
 
-// Use as array directly (implements ArrayAccess)
-foreach ($schema['properties'] as $name => $property) {
-    // Process properties
-}
-
-// Or explicitly convert to array
-$array = $schema->toArray();
-```
-
-### Convert to JSON String
-
-```php
-// Direct method chaining
-$json = Struct::define('User', function (Property $property) {
-    $property->string('name')->required();
-    $property->email('email')->required();
-})->toJson();
-
-// Or call toJson() on the schema object
-$schema = Struct::define('User', function (Property $property) {
-    $property->string('name')->required();
-});
-$json = $schema->toJson();
-
-// Both return formatted JSON strings
+// Convert to array
+$array = $struct->toArray();
 ```
 
 ### JSON Serialization
@@ -593,48 +548,36 @@ $json = $schema->toJson();
 The `Struct` object implements `JsonSerializable`, so you can use it directly with `json_encode()`:
 
 ```php
-$schema = Struct::define('User', function (Property $property) {
+$struct = Struct::define('User', 'A user schema', function (Property $property) {
     $property->string('name')->required();
 });
 
 // Automatic JSON serialization
-$json = json_encode($schema, JSON_PRETTY_PRINT);
+$json = json_encode($struct, JSON_PRETTY_PRINT);
 ```
 
 ### Using Structure Classes
 
-When using the `make:struct` command, you can leverage the new object methods:
+When using the `make:struct` command, you can create reusable schema classes:
 
 ```php
 // In your structure class (generated by make:struct)
 class UserProfile
 {
-    public static function schema(): Struct
+    public static function schema(): array
     {
-        return Struct::define('user_profile', function (Property $table) {
-            $table->string('name')->required();
-            $table->string('email')->required();
-        });
-    }
-
-    public static function toJson(): string
-    {
-        return static::schema()->toJson();
-    }
-
-    public static function toArray(): array
-    {
-        return static::schema()->toArray();
+        return Struct::define('user_profile', 'A user profile schema', function (Property $property) {
+            $property->string('name')->required();
+            $property->string('email')->required();
+        })->toArray();
     }
 }
 
 // Using the structure
-$schema = UserProfile::schema();  // Returns Struct object
-$array = UserProfile::toArray();  // Returns array
-$json = UserProfile::toJson();    // Returns JSON string
+$array = UserProfile::schema();  // Returns array
 
-// Or chain methods directly
-$json = UserProfile::schema()->toJson();
+// For JSON, use json_encode
+$json = json_encode(UserProfile::schema(), JSON_PRETTY_PRINT);
 ```
 
 ## Testing
