@@ -292,22 +292,42 @@ Control whether objects can have properties not defined in the schema:
 // Allow additional properties
 $builder->additionalProperties(true);
 
-// Disallow additional properties (strict mode)
-$builder->additionalProperties(false);
+// Disallow additional properties
+$builder->additionalProperties(false); // This is the default
 
 // Or use the convenient strict() helper
-$builder->strict();
+$builder->strict(); // Disallows additional properties AND marks all fields as required
 ```
 
-Example:
+#### Strict Mode for LLM APIs
+
+The `strict()` method is particularly useful for LLM APIs like **OpenAI Structured Outputs** which require:
+1. `additionalProperties: false`
+2. All properties in the `required` array
 
 ```php
-$schema = Struct::define('StrictUser', function (Builder $builder) {
-    $builder->string('name')->required();
-    $builder->string('email')->required();
-    $builder->strict(); // No other properties allowed
+// Perfect for OpenAI Structured Outputs
+$schema = Struct::define('User', function (Builder $builder) {
+    $builder->string('fullname');
+    $builder->email('email');
+    $builder->int('age')->min(0)->max(120);
+    $builder->string('location');
+
+    $builder->strict(); // Makes all fields required + disallows extra properties
 });
 ```
+
+This generates:
+```json
+{
+    "type": "object",
+    "properties": {...},
+    "required": ["fullname", "email", "age", "location"],
+    "additionalProperties": false
+}
+```
+
+> **Note**: By default, `additionalProperties` is already set to `false`. Use `strict()` when you also need all fields to be required (like for OpenAI).
 
 ### Schema Metadata
 

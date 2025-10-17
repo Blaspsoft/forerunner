@@ -4,6 +4,22 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.1.3 - 2024-10-17
+
+### Changed
+- **Enhanced `strict()` method**: Now marks all fields as required in addition to setting `additionalProperties: false`
+  - Perfect for OpenAI Structured Outputs which requires all properties in the `required` array
+  - Simplifies schema creation for strict LLM APIs
+  - One method call handles both requirements
+
+### Added
+- Test for new `strict()` behavior
+- README documentation for strict mode and OpenAI compatibility
+
+### Technical Details
+- 120 tests passing with 403 assertions
+- PHPStan Level 9 compliance maintained
+
 ## 0.1.2 - 2024-10-17
 
 ### Changed
