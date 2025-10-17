@@ -2,6 +2,9 @@
 
 namespace Blaspsoft\Forerunner\Schemas;
 
+/**
+ * @implements \ArrayAccess<string, mixed>
+ */
 class Struct implements \ArrayAccess, \JsonSerializable
 {
     protected Builder $builder;
@@ -54,6 +57,8 @@ class Struct implements \ArrayAccess, \JsonSerializable
 
     /**
      * Check if an offset exists (ArrayAccess).
+     *
+     * @param  string  $offset
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -62,6 +67,8 @@ class Struct implements \ArrayAccess, \JsonSerializable
 
     /**
      * Get an offset value (ArrayAccess).
+     *
+     * @param  string  $offset
      */
     public function offsetGet(mixed $offset): mixed
     {

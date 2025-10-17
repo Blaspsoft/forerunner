@@ -21,12 +21,18 @@ class ForerunnerServiceProvider extends ServiceProvider
         $this->app->singleton('forerunner.schema', function () {
             return new class
             {
-                public static function __callStatic($method, $args)
+                /**
+                 * @param  array<int, mixed>  $args
+                 */
+                public static function __callStatic(string $method, array $args): mixed
                 {
                     return Struct::$method(...$args);
                 }
 
-                public function __call($method, $args)
+                /**
+                 * @param  array<int, mixed>  $args
+                 */
+                public function __call(string $method, array $args): mixed
                 {
                     return Struct::$method(...$args);
                 }
