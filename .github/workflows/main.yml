@@ -74,7 +74,7 @@ jobs:
         run: composer update --prefer-stable --prefer-dist --no-interaction
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --error-format=github
+        run: vendor/bin/phpstan analyse -c phpstan.neon --error-format=github
 
       - name: Run Laravel Pint
         run: vendor/bin/pint --test
