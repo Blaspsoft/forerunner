@@ -15,8 +15,10 @@ class {{ class }}
     public static function schema(): Struct
     {
         return Struct::define('{{ structName }}', function (Builder $builder) {
-            $builder->string('example_field')->required();
+            $builder->string('example_field');
             // Add your fields here
+
+            $builder->strict(); // All fields required + no additional properties
         });
     }
 
@@ -38,19 +40,5 @@ class {{ class }}
     public static function toJson(): string
     {
         return static::schema()->toJson();
-    }
-
-    /**
-     * Get the schema with a custom name.
-     *
-     * @param string $name
-     * @return Struct
-     */
-    public static function named(string $name): Struct
-    {
-        return Struct::define($name, function (Builder $builder) {
-            $builder->string('example_field')->required();
-            // Add your fields here
-        });
     }
 }

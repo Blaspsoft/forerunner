@@ -72,13 +72,13 @@ it('generates struct with toJson method', function () {
         ->and($content)->toContain('static::schema()->toJson()');
 });
 
-it('generates struct with named method', function () {
+it('generates struct with strict mode by default', function () {
     $this->artisan('make:struct', ['name' => 'TestUserStruct'])
         ->assertExitCode(0);
 
     $content = File::get($this->testFilePath);
 
-    expect($content)->toContain('public static function named(string $name): Struct');
+    expect($content)->toContain('$builder->strict()');
 });
 
 it('converts PascalCase to snake_case for struct name', function () {
