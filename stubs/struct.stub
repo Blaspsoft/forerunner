@@ -14,8 +14,8 @@ class {{ class }}
      */
     public static function schema(): Struct
     {
-        return Struct::define('{{ structName }}', function (Builder $table) {
-            $table->string('example_field')->required();
+        return Struct::define('{{ structName }}', function (Builder $builder) {
+            $builder->string('example_field')->required();
             // Add your fields here
         });
     }
@@ -48,8 +48,8 @@ class {{ class }}
      */
     public static function named(string $name): Struct
     {
-        return Struct::define($name, function (Builder $table) {
-            $table->string('example_field')->required();
+        return Struct::define($name, function (Builder $builder) {
+            $builder->string('example_field')->required();
             // Add your fields here
         });
     }
