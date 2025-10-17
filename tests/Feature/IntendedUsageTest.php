@@ -1,7 +1,7 @@
 <?php
 
-use Blaspsoft\Forerunner\Schemas\Builder;
-use Blaspsoft\Forerunner\Schemas\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
 
 it('works with the intended API usage', function () {
     $schema = Struct::define('User', function (Builder $builder) {

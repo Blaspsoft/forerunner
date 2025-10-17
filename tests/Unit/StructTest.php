@@ -1,7 +1,7 @@
 <?php
 
-use Blaspsoft\Forerunner\Schemas\Builder;
-use Blaspsoft\Forerunner\Schemas\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
 
 describe('Struct', function () {
     it('can define a simple schema', function () {

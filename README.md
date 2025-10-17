@@ -44,8 +44,8 @@ This creates a structure class at `app/Structures/UserProfile.php`:
 
 namespace App\Structures;
 
-use Blaspsoft\Forerunner\Schemas\Struct;
-use Blaspsoft\Forerunner\Schemas\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
 
 class UserProfile
 {
@@ -64,8 +64,8 @@ class UserProfile
 Define a schema using the `Struct` class or `Schema` facade:
 
 ```php
-use Blaspsoft\Forerunner\Schemas\Struct;
-use Blaspsoft\Forerunner\Schemas\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
 
 $schema = Struct::define('User', function (Builder $builder) {
     $builder->string('name', 'The user\'s full name')->required();
@@ -79,7 +79,7 @@ Or using the facade:
 
 ```php
 use Blaspsoft\Forerunner\Facades\Schema;
-use Blaspsoft\Forerunner\Schemas\Builder;
+use Blaspsoft\Forerunner\Schema\Builder;
 
 $schema = Schema::define('User', function (Builder $builder) {
     $builder->string('name')->required();
@@ -352,8 +352,8 @@ $builder->string('email')
 ### Complete Advanced Example
 
 ```php
-use Blaspsoft\Forerunner\Schemas\Struct;
-use Blaspsoft\Forerunner\Schemas\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
 
 $schema = Struct::define('AdvancedUser', function (Builder $builder) {
     // Schema metadata
@@ -458,8 +458,8 @@ This generates:
 ### User Profile with Nested Objects
 
 ```php
-use Blaspsoft\Forerunner\Schemas\Struct;
-use Blaspsoft\Forerunner\Schemas\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
 
 $schema = Struct::define('UserProfile', function (Builder $builder) {
     $builder->string('name', 'The user\'s full name')
@@ -636,16 +636,6 @@ $json = UserProfile::toJson();    // Returns JSON string
 // Or chain methods directly
 $json = UserProfile::schema()->toJson();
 ```
-
-## Configuration
-
-Publish the configuration file:
-
-```bash
-php artisan vendor:publish --tag="forerunner-config"
-```
-
-This will create `config/forerunner.php` where you can customize package settings.
 
 ## Testing
 

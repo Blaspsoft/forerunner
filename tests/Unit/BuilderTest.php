@@ -1,7 +1,7 @@
 <?php
 
-use Blaspsoft\Forerunner\Schemas\Builder;
-use Blaspsoft\Forerunner\Schemas\PropertyBuilder;
+use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\PropertyBuilder;
 
 describe('Builder', function () {
     it('can be instantiated with a name', function () {

@@ -48,8 +48,8 @@ it('generates struct with correct imports', function () {
 
     $content = File::get($this->testFilePath);
 
-    expect($content)->toContain('use Blaspsoft\Forerunner\Schemas\Struct;')
-        ->and($content)->toContain('use Blaspsoft\Forerunner\Schemas\Builder;');
+    expect($content)->toContain('use Blaspsoft\Forerunner\Schema\Struct;')
+        ->and($content)->toContain('use Blaspsoft\Forerunner\Schema\Builder;');
 });
 
 it('generates struct with schema method', function () {

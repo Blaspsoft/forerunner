@@ -1,8 +1,8 @@
 <?php
 
 use Blaspsoft\Forerunner\Facades\Schema;
-use Blaspsoft\Forerunner\Schemas\Builder;
-use Blaspsoft\Forerunner\Schemas\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
 
 describe('Schema Facade', function () {
     it('can define a schema using the facade', function () {

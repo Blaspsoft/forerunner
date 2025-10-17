@@ -1,6 +1,6 @@
 <?php
 
-namespace Blaspsoft\Forerunner\Schemas;
+namespace Blaspsoft\Forerunner\Schema;
 
 class PropertyBuilder
 {

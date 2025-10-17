@@ -1,8 +1,8 @@
 <?php
 
-use Blaspsoft\Forerunner\Schemas\Builder;
-use Blaspsoft\Forerunner\Schemas\PropertyBuilder;
-use Blaspsoft\Forerunner\Schemas\Struct;
+use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\PropertyBuilder;
+use Blaspsoft\Forerunner\Schema\Struct;
 
 describe('Advanced Features', function () {
     describe('additionalProperties', function () {
