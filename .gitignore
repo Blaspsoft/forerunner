@@ -1,11 +1,36 @@
+# IDEs
 .idea
+.vscode
+*.sublime-*
+*.swp
+*.swo
+*~
+
+# Testing
 .phpunit.cache
 .phpunit.result.cache
-build
-composer.lock
 coverage
-docs
+.php-cs-fixer.cache
+
+# Build
+build
+
+# Documentation (generated)
+docs/_site
+docs/.jekyll-cache
+
+# Dependencies
 vendor
 node_modules
-.php-cs-fixer.cache
+
+# Composer (for libraries, lock file should be ignored)
+composer.lock
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.log

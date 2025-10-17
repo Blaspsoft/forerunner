@@ -36,6 +36,14 @@ class PropertyBuilder
 
     protected ?string $pattern = null;
 
+    protected ?bool $uniqueItems = null;
+
+    protected ?string $format = null;
+
+    protected bool $nullable = false;
+
+    protected ?string $title = null;
+
     public function __construct(string $name, string $type, ?string $description = null)
     {
         $this->name = $name;
@@ -182,6 +190,46 @@ class PropertyBuilder
     }
 
     /**
+     * Set the title for this field.
+     */
+    public function title(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Ensure array items are unique.
+     */
+    public function uniqueItems(bool $unique = true): self
+    {
+        $this->uniqueItems = $unique;
+
+        return $this;
+    }
+
+    /**
+     * Set the format for string validation.
+     */
+    public function format(string $format): self
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    /**
+     * Mark this field as nullable.
+     */
+    public function nullable(bool $nullable = true): self
+    {
+        $this->nullable = $nullable;
+
+        return $this;
+    }
+
+    /**
      * Set a nested builder for object types.
      */
     public function setNestedBuilder(Builder $builder): void
@@ -212,10 +260,23 @@ class PropertyBuilder
      */
     public function toArray(): array
     {
-        $property = ['type' => $this->type];
+        // Handle nullable types
+        if ($this->nullable) {
+            $property = ['type' => [$this->type, 'null']];
+        } else {
+            $property = ['type' => $this->type];
+        }
+
+        if ($this->title) {
+            $property['title'] = $this->title;
+        }
 
         if ($this->description) {
             $property['description'] = $this->description;
+        }
+
+        if ($this->format) {
+            $property['format'] = $this->format;
         }
 
         if ($this->enum !== null) {
@@ -223,11 +284,23 @@ class PropertyBuilder
         }
 
         if ($this->nestedBuilder !== null) {
-            $property = array_merge($property, $this->nestedBuilder->toArray());
+            $nestedArray = $this->nestedBuilder->toArray();
+            // When nullable is set on an object, keep the nullable type but merge nested properties
+            if ($this->nullable) {
+                // Preserve the nullable type array, merge everything except 'type'
+                unset($nestedArray['type']);
+                $property = array_merge($property, $nestedArray);
+            } else {
+                $property = array_merge($property, $nestedArray);
+            }
         }
 
         if ($this->items !== null) {
             $property['items'] = $this->items;
+        }
+
+        if ($this->uniqueItems !== null) {
+            $property['uniqueItems'] = $this->uniqueItems;
         }
 
         if ($this->default !== null) {

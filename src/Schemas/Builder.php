@@ -14,6 +14,12 @@ class Builder
 
     protected ?string $description = null;
 
+    protected ?bool $additionalProperties = null;
+
+    protected ?string $schemaVersion = null;
+
+    protected ?string $title = null;
+
     public function __construct(string $name)
     {
         $this->name = $name;
@@ -113,11 +119,123 @@ class Builder
     }
 
     /**
+     * Add an email field.
+     */
+    public function email(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('email');
+    }
+
+    /**
+     * Add a URL field.
+     */
+    public function url(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('uri');
+    }
+
+    /**
+     * Add a UUID field.
+     */
+    public function uuid(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('uuid');
+    }
+
+    /**
+     * Add a date-time field.
+     */
+    public function datetime(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('date-time');
+    }
+
+    /**
+     * Add a date field.
+     */
+    public function date(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('date');
+    }
+
+    /**
+     * Add a time field.
+     */
+    public function time(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('time');
+    }
+
+    /**
+     * Add an IPv4 address field.
+     */
+    public function ipv4(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('ipv4');
+    }
+
+    /**
+     * Add an IPv6 address field.
+     */
+    public function ipv6(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('ipv6');
+    }
+
+    /**
+     * Add a hostname field.
+     */
+    public function hostname(string $name, ?string $description = null): PropertyBuilder
+    {
+        return $this->addProperty($name, 'string', $description)->format('hostname');
+    }
+
+    /**
      * Set the description for the entire schema.
      */
     public function description(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Set the title for the entire schema.
+     */
+    public function title(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Set whether additional properties are allowed.
+     */
+    public function additionalProperties(bool $allowed = true): self
+    {
+        $this->additionalProperties = $allowed;
+
+        return $this;
+    }
+
+    /**
+     * Disallow additional properties.
+     */
+    public function strict(): self
+    {
+        $this->additionalProperties = false;
+
+        return $this;
+    }
+
+    /**
+     * Set the JSON Schema version.
+     */
+    public function schemaVersion(string $version = 'https://json-schema.org/draft/2020-12/schema'): self
+    {
+        $this->schemaVersion = $version;
 
         return $this;
     }
@@ -155,6 +273,14 @@ class Builder
             'properties' => [],
         ];
 
+        if ($this->schemaVersion) {
+            $schema['$schema'] = $this->schemaVersion;
+        }
+
+        if ($this->title) {
+            $schema['title'] = $this->title;
+        }
+
         if ($this->description) {
             $schema['description'] = $this->description;
         }
@@ -171,14 +297,20 @@ class Builder
             $schema['required'] = $this->required;
         }
 
+        if ($this->additionalProperties !== null) {
+            $schema['additionalProperties'] = $this->additionalProperties;
+        }
+
         return $schema;
     }
 
     /**
      * Convert the builder to a JSON string.
+     *
+     * @throws \JsonException
      */
     public function toJson(): string
     {
-        return json_encode($this->toArray(), JSON_PRETTY_PRINT) ?: '';
+        return json_encode($this->toArray(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
     }
 }

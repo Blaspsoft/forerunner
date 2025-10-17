@@ -1,5 +1,7 @@
 # Forerunner
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner) [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/blaspsoft/forerunner/main.yml?branch=main&label=tests&style=flat-square)](https://github.com/blaspsoft/forerunner/actions?query=workflow%3Amain+branch%3Amain) [![Total Downloads](https://img.shields.io/packagist/dt/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner) [![License](https://img.shields.io/packagist/l/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner) [![PHP Version](https://img.shields.io/packagist/php-v/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner)
+
 A Laravel package that provides an elegant, migration-inspired API for defining JSON schemas that ensure your LLM responses are perfectly structured every time.
 
 ## Installation
@@ -7,8 +9,10 @@ A Laravel package that provides an elegant, migration-inspired API for defining 
 You can install the package via composer:
 
 ```bash
-composer require blaspsoft/forerunner
+composer require blaspsoft/forerunner:^0.1
 ```
+
+> **Note**: This is a pre-release version (0.x). The API may change as we gather feedback and iterate towards 1.0.0.
 
 The package will automatically register its service provider.
 
@@ -195,6 +199,227 @@ $builder->string('field')
     ->optional()                    // Mark as optional (default)
     ->default('value')              // Set default value
     ->description('Field description'); // Add description
+```
+
+## Advanced Features
+
+### Helper Methods for Common Formats
+
+Forerunner provides convenient helper methods for commonly used field formats:
+
+```php
+// Email field with automatic format validation
+$builder->email('email')->required();
+
+// URL field
+$builder->url('website');
+
+// UUID field
+$builder->uuid('id')->required();
+
+// Date-time field (ISO 8601)
+$builder->datetime('created_at');
+
+// Date field
+$builder->date('birth_date');
+
+// Time field
+$builder->time('start_time');
+
+// IPv4 address
+$builder->ipv4('ip_address');
+
+// IPv6 address
+$builder->ipv6('ipv6_address');
+
+// Hostname
+$builder->hostname('server_name');
+```
+
+### String Format Validation
+
+You can also set custom formats on string fields:
+
+```php
+$builder->string('email')->format('email');
+$builder->string('website')->format('uri');
+$builder->string('id')->format('uuid');
+```
+
+Supported formats: `email`, `uri`, `url`, `uuid`, `date`, `date-time`, `time`, `ipv4`, `ipv6`, `hostname`, and more.
+
+### Nullable Fields
+
+Mark fields as nullable to allow both the specified type and null:
+
+```php
+$builder->string('middle_name')->nullable();
+// Generates: {"type": ["string", "null"]}
+
+$builder->object('address', function (Builder $nested) {
+    $nested->string('street')->required();
+    $nested->string('city')->required();
+})->nullable();
+// Generates: {"type": ["object", "null"], "properties": {...}}
+```
+
+### Unique Array Items
+
+Ensure array items are unique:
+
+```php
+$builder->array('tags')
+    ->items('string')
+    ->uniqueItems();
+```
+
+### Additional Properties Control
+
+Control whether objects can have properties not defined in the schema:
+
+```php
+// Allow additional properties
+$builder->additionalProperties(true);
+
+// Disallow additional properties (strict mode)
+$builder->additionalProperties(false);
+
+// Or use the convenient strict() helper
+$builder->strict();
+```
+
+Example:
+
+```php
+$schema = Struct::define('StrictUser', function (Builder $builder) {
+    $builder->string('name')->required();
+    $builder->string('email')->required();
+    $builder->strict(); // No other properties allowed
+});
+```
+
+### Schema Metadata
+
+Add metadata to your schemas:
+
+```php
+$builder->title('User Schema');
+$builder->description('Schema for user data validation');
+$builder->schemaVersion('https://json-schema.org/draft/2020-12/schema');
+```
+
+You can also add titles to individual fields:
+
+```php
+$builder->string('email')
+    ->title('Email Address')
+    ->description('User\'s primary email address')
+    ->format('email')
+    ->required();
+```
+
+### Complete Advanced Example
+
+```php
+use Blaspsoft\Forerunner\Schemas\Struct;
+use Blaspsoft\Forerunner\Schemas\Builder;
+
+$schema = Struct::define('AdvancedUser', function (Builder $builder) {
+    // Schema metadata
+    $builder->schemaVersion();
+    $builder->title('Advanced User Schema');
+    $builder->description('Comprehensive user data structure');
+    $builder->strict(); // Disallow additional properties
+
+    // Helper methods
+    $builder->uuid('id')->required();
+    $builder->email('email')->required();
+    $builder->url('website')->nullable();
+    $builder->datetime('created_at')->required();
+
+    // Nullable nested object
+    $builder->object('profile', function (Builder $profile) {
+        $profile->string('bio')->maxLength(500);
+        $profile->string('avatar_url')->format('uri');
+    })->nullable();
+
+    // Array with unique items
+    $builder->array('tags')
+        ->items('string')
+        ->uniqueItems()
+        ->minItems(1)
+        ->maxItems(10);
+
+    // Advanced field configuration
+    $builder->string('username')
+        ->title('Username')
+        ->description('Unique username for the account')
+        ->minLength(3)
+        ->maxLength(30)
+        ->pattern('^[a-zA-Z0-9_]+$')
+        ->required();
+});
+```
+
+This generates:
+
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "title": "Advanced User Schema",
+    "description": "Comprehensive user data structure",
+    "properties": {
+        "id": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "email": {
+            "type": "string",
+            "format": "email"
+        },
+        "website": {
+            "type": ["string", "null"],
+            "format": "uri"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "profile": {
+            "type": ["object", "null"],
+            "properties": {
+                "bio": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "avatar_url": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "uniqueItems": true,
+            "minItems": 1,
+            "maxItems": 10
+        },
+        "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Unique username for the account",
+            "minLength": 3,
+            "maxLength": 30,
+            "pattern": "^[a-zA-Z0-9_]+$"
+        }
+    },
+    "required": ["id", "email", "created_at", "username"],
+    "additionalProperties": false
+}
 ```
 
 ## Complex Examples
