@@ -32,24 +32,11 @@ describe('Struct', function () {
             $builder->string('name')->required();
             $builder->string('email')->required();
             $builder->int('age');
-        });
+        })->toArray();
 
-        // Can be used like an array
         expect($schema['required'])->toContain('name')
             ->and($schema['required'])->toContain('email')
             ->and($schema['required'])->not->toContain('age');
-    });
-
-    it('can access struct as array via ArrayAccess', function () {
-        $schema = Struct::define('User', function (Builder $builder) {
-            $builder->string('name')->required();
-        });
-
-        // Array access works
-        expect(isset($schema['type']))->toBeTrue()
-            ->and($schema['type'])->toBe('object')
-            ->and(isset($schema['properties']))->toBeTrue()
-            ->and(isset($schema['properties']['name']))->toBeTrue();
     });
 
     it('can define schema with nested objects', function () {
@@ -59,7 +46,7 @@ describe('Struct', function () {
                 $nested->string('name')->required();
                 $nested->string('email')->required();
             })->required();
-        });
+        })->toArray();
 
         expect($schema['properties'])->toHaveKey('author')
             ->and($schema['properties']['author']['type'])->toBe('object')
@@ -73,7 +60,7 @@ describe('Struct', function () {
         $schema = Struct::define('Product', function (Builder $builder) {
             $builder->string('name');
             $builder->array('tags')->items('string');
-        });
+        })->toArray();
 
         expect($schema['properties'])->toHaveKey('tags')
             ->and($schema['properties']['tags']['type'])->toBe('array')
@@ -84,7 +71,7 @@ describe('Struct', function () {
         $schema = Struct::define('User', function (Builder $builder) {
             $builder->string('name');
             $builder->enum('role', ['admin', 'user', 'guest']);
-        });
+        })->toArray();
 
         expect($schema['properties'])->toHaveKey('role')
             ->and($schema['properties']['role']['type'])->toBe('string')
@@ -98,7 +85,7 @@ describe('Struct', function () {
             $builder->float('price');
             $builder->boolean('isActive');
             $builder->array('items');
-        });
+        })->toArray();
 
         expect($schema['properties']['text']['type'])->toBe('string')
             ->and($schema['properties']['count']['type'])->toBe('integer')
@@ -116,7 +103,7 @@ describe('Struct', function () {
             $builder->int('age')
                 ->min(0)
                 ->max(150);
-        });
+        })->toArray();
 
         expect($schema['properties']['username'])->toHaveKey('minLength', 3)
             ->and($schema['properties']['username'])->toHaveKey('maxLength', 50)
@@ -128,7 +115,7 @@ describe('Struct', function () {
         $schema = Struct::define('User', function (Builder $builder) {
             $builder->description('A user object');
             $builder->string('name');
-        });
+        })->toArray();
 
         expect($schema)->toHaveKey('description', 'A user object');
     });
@@ -149,7 +136,7 @@ describe('Struct', function () {
             });
             $builder->array('tags')->items('string');
             $builder->enum('status', ['draft', 'published', 'archived'])->default('draft');
-        });
+        })->toArray();
 
         expect($schema['type'])->toBe('object')
             ->and($schema['properties'])->toHaveKey('title')
@@ -167,7 +154,7 @@ describe('Struct', function () {
     it('can define empty schema', function () {
         $schema = Struct::define('Empty', function (Builder $builder) {
             // No properties
-        });
+        })->toArray();
 
         expect($schema['type'])->toBe('object')
             ->and($schema['properties'])->toBeArray()
@@ -180,7 +167,7 @@ describe('Struct', function () {
             $builder->boolean('notifications')->default(true);
             $builder->string('theme')->default('light');
             $builder->int('pageSize')->default(10);
-        });
+        })->toArray();
 
         expect($schema['properties']['notifications']['default'])->toBe(true)
             ->and($schema['properties']['theme']['default'])->toBe('light')
@@ -191,7 +178,7 @@ describe('Struct', function () {
         $schema = Struct::define('Contact', function (Builder $builder) {
             $builder->string('email')->pattern('^[^@]+@[^@]+\.[^@]+$');
             $builder->string('phone')->pattern('^\d{3}-\d{3}-\d{4}$');
-        });
+        })->toArray();
 
         expect($schema['properties']['email'])->toHaveKey('pattern')
             ->and($schema['properties']['phone'])->toHaveKey('pattern');
@@ -208,7 +195,7 @@ describe('Struct', function () {
                     $coords->float('longitude');
                 });
             });
-        });
+        })->toArray();
 
         expect($schema['properties']['address']['type'])->toBe('object')
             ->and($schema['properties']['address']['properties'])->toHaveKey('coordinates')
@@ -223,31 +210,11 @@ describe('Struct', function () {
                 ->minItems(1)
                 ->maxItems(10)
                 ->items('string');
-        });
+        })->toArray();
 
         expect($schema['properties']['items'])->toHaveKey('minItems', 1)
             ->and($schema['properties']['items'])->toHaveKey('maxItems', 10)
             ->and($schema['properties']['items']['items'])->toBe(['type' => 'string']);
-    });
-
-    it('can generate JSON string directly with toJson method', function () {
-        $json = Struct::define('User', function (Builder $builder) {
-            $builder->string('name')->required();
-            $builder->email('email')->required();
-        })->toJson();
-
-        expect($json)->toBeString()
-            ->and($json)->toContain('"type": "object"')
-            ->and($json)->toContain('"name"')
-            ->and($json)->toContain('"email"')
-            ->and($json)->toContain('"format": "email"')
-            ->and($json)->toContain('"required"');
-
-        $decoded = json_decode($json, true);
-        expect($decoded)->toBeArray()
-            ->and($decoded['type'])->toBe('object')
-            ->and($decoded['properties'])->toHaveKey('name')
-            ->and($decoded['properties'])->toHaveKey('email');
     });
 
     it('can be serialized with json_encode', function () {

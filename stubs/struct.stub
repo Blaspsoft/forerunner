@@ -10,35 +10,15 @@ class {{ class }}
     /**
      * Define the structure schema.
      *
-     * @return Struct
+     * @return array<string, mixed>
      */
-    public static function schema(): Struct
+    public static function schema(): array
     {
         return Struct::define('{{ structName }}', function (Builder $builder) {
             $builder->string('example_field');
             // Add your fields here
 
             $builder->strict(); // All fields required + no additional properties
-        });
-    }
-
-    /**
-     * Get the schema as a PHP array.
-     *
-     * @return array<string, mixed>
-     */
-    public static function toArray(): array
-    {
-        return static::schema()->toArray();
-    }
-
-    /**
-     * Get the schema as JSON string.
-     *
-     * @return string
-     */
-    public static function toJson(): string
-    {
-        return static::schema()->toJson();
+        })->toArray();
     }
 }

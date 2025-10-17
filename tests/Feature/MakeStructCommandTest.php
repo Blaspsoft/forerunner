@@ -58,18 +58,9 @@ it('generates struct with schema method', function () {
 
     $content = File::get($this->testFilePath);
 
-    expect($content)->toContain('public static function schema(): Struct')
-        ->and($content)->toContain("Struct::define('test_user_struct'");
-});
-
-it('generates struct with toJson method', function () {
-    $this->artisan('make:struct', ['name' => 'TestUserStruct'])
-        ->assertExitCode(0);
-
-    $content = File::get($this->testFilePath);
-
-    expect($content)->toContain('public static function toJson(): string')
-        ->and($content)->toContain('static::schema()->toJson()');
+    expect($content)->toContain('public static function schema(): array')
+        ->and($content)->toContain("Struct::define('test_user_struct'")
+        ->and($content)->toContain('->toArray()');
 });
 
 it('generates struct with strict mode by default', function () {

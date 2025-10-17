@@ -2,10 +2,7 @@
 
 namespace Blaspsoft\Forerunner\Schema;
 
-/**
- * @implements \ArrayAccess<string, mixed>
- */
-class Struct implements \ArrayAccess, \JsonSerializable
+class Struct implements \JsonSerializable
 {
     protected Builder $builder;
 
@@ -33,62 +30,28 @@ class Struct implements \ArrayAccess, \JsonSerializable
 
     /**
      * Convert the schema to an array.
+     * If strict mode is enabled, wraps the schema in OpenAI's format.
      *
      * @return array<string, mixed>
      */
     public function toArray(): array
     {
         if ($this->cache === null) {
-            $this->cache = $this->builder->toArray();
+            $builderArray = $this->builder->toArray();
+
+            // If strict mode is enabled, wrap in OpenAI's format
+            if ($this->builder->isStrict()) {
+                $this->cache = [
+                    'name' => $this->name,
+                    'strict' => true,
+                    'schema' => $builderArray,
+                ];
+            } else {
+                $this->cache = $builderArray;
+            }
         }
 
         return $this->cache;
-    }
-
-    /**
-     * Convert the schema to a JSON string.
-     *
-     * @throws \JsonException
-     */
-    public function toJson(): string
-    {
-        return $this->builder->toJson();
-    }
-
-    /**
-     * Check if an offset exists (ArrayAccess).
-     *
-     * @param  string  $offset
-     */
-    public function offsetExists(mixed $offset): bool
-    {
-        return isset($this->toArray()[$offset]);
-    }
-
-    /**
-     * Get an offset value (ArrayAccess).
-     *
-     * @param  string  $offset
-     */
-    public function offsetGet(mixed $offset): mixed
-    {
-        return $this->toArray()[$offset];
-    }
-
-    /**
-     * Set an offset value (ArrayAccess) - not supported.
-     */
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        throw new \BadMethodCallException('Struct schemas are immutable');
-    }
-
-    /**
-     * Unset an offset (ArrayAccess) - not supported.
-     */
-    public function offsetUnset(mixed $offset): void
-    {
-        throw new \BadMethodCallException('Struct schemas are immutable');
     }
 
     /**

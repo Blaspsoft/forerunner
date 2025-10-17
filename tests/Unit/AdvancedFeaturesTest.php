@@ -340,7 +340,7 @@ describe('Advanced Features', function () {
     });
 
     describe('complete schema with all features', function () {
-        it('generates comprehensive schema with all features', function () {
+        it('generates comprehensive schema with all features in OpenAI format when strict', function () {
             $schema = Struct::define('CompleteExample', function (Builder $builder) {
                 $builder->schemaVersion();
                 $builder->title('Complete Schema Example');
@@ -365,18 +365,41 @@ describe('Advanced Features', function () {
                     $nested->string('version')->required();
                     $nested->int('count')->min(0);
                 })->nullable();
-            });
+            })->toArray();
 
-            expect($schema)->toHaveKey('$schema')
-                ->and($schema)->toHaveKey('title', 'Complete Schema Example')
-                ->and($schema)->toHaveKey('description')
-                ->and($schema)->toHaveKey('additionalProperties', false)
+            // Check OpenAI format wrapper
+            expect($schema)->toHaveKey('name', 'CompleteExample')
+                ->and($schema)->toHaveKey('strict', true)
+                ->and($schema)->toHaveKey('schema');
+
+            // Check the nested schema structure
+            $nestedSchema = $schema['schema'];
+            expect($nestedSchema)->toHaveKey('$schema')
+                ->and($nestedSchema)->toHaveKey('title', 'Complete Schema Example')
+                ->and($nestedSchema)->toHaveKey('description')
+                ->and($nestedSchema)->toHaveKey('additionalProperties', false)
+                ->and($nestedSchema['properties']['id']['format'])->toBe('uuid')
+                ->and($nestedSchema['properties']['email']['format'])->toBe('email')
+                ->and($nestedSchema['properties']['website']['type'])->toBe(['string', 'null'])
+                ->and($nestedSchema['properties']['tags']['uniqueItems'])->toBeTrue()
+                ->and($nestedSchema['properties']['metadata']['type'])->toBe(['object', 'null'])
+                ->and($nestedSchema['required'])->toContain('id', 'email', 'created_at');
+        });
+
+        it('generates normal schema without strict mode', function () {
+            $schema = Struct::define('NormalExample', function (Builder $builder) {
+                $builder->title('Normal Schema Example');
+                $builder->uuid('id')->required();
+                $builder->email('email')->required();
+            })->toArray();
+
+            // Without strict(), should return normal flat schema
+            expect($schema)->toHaveKey('type', 'object')
+                ->and($schema)->toHaveKey('title', 'Normal Schema Example')
+                ->and($schema)->not->toHaveKey('name')
+                ->and($schema)->not->toHaveKey('strict')
                 ->and($schema['properties']['id']['format'])->toBe('uuid')
-                ->and($schema['properties']['email']['format'])->toBe('email')
-                ->and($schema['properties']['website']['type'])->toBe(['string', 'null'])
-                ->and($schema['properties']['tags']['uniqueItems'])->toBeTrue()
-                ->and($schema['properties']['metadata']['type'])->toBe(['object', 'null'])
-                ->and($schema['required'])->toContain('id', 'email', 'created_at');
+                ->and($schema['properties']['email']['format'])->toBe('email');
         });
     });
 });

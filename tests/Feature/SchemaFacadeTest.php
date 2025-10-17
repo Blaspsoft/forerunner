@@ -2,16 +2,15 @@
 
 use Blaspsoft\Forerunner\Facades\Schema;
 use Blaspsoft\Forerunner\Schema\Builder;
-use Blaspsoft\Forerunner\Schema\Struct;
 
 describe('Schema Facade', function () {
     it('can define a schema using the facade', function () {
         $schema = Schema::define('User', function (Builder $builder) {
             $builder->string('name')->required();
             $builder->string('email')->required();
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema['type'])->toBe('object')
             ->and($schema['properties'])->toHaveKey('name')
             ->and($schema['properties'])->toHaveKey('email')
@@ -29,9 +28,9 @@ describe('Schema Facade', function () {
             })->required();
             $builder->array('tags')->items('string');
             $builder->enum('status', ['draft', 'published', 'archived'])->default('draft');
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema['type'])->toBe('object')
             ->and($schema['properties'])->toHaveKey('title')
             ->and($schema['properties'])->toHaveKey('author')
@@ -48,9 +47,9 @@ describe('Schema Facade', function () {
             $builder->boolean('isActive');
             $builder->array('items');
             $builder->enum('role', ['admin', 'user']);
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema['properties']['text']['type'])->toBe('string')
             ->and($schema['properties']['count']['type'])->toBe('integer')
             ->and($schema['properties']['price']['type'])->toBe('number')
@@ -73,9 +72,9 @@ describe('Schema Facade', function () {
             $builder->array('tags')
                 ->minItems(1)
                 ->maxItems(10);
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema['properties']['username'])->toHaveKey('minLength', 3)
             ->and($schema['properties']['username'])->toHaveKey('maxLength', 50)
             ->and($schema['properties']['username'])->toHaveKey('pattern')
@@ -96,9 +95,9 @@ describe('Schema Facade', function () {
                     $coords->float('longitude');
                 });
             });
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema['properties']['address']['type'])->toBe('object')
             ->and($schema['properties']['address']['properties'])->toHaveKey('coordinates')
             ->and($schema['properties']['address']['properties']['coordinates']['type'])->toBe('object')
@@ -113,9 +112,9 @@ describe('Schema Facade', function () {
                 $user->string('email')->required();
                 $user->int('age');
             });
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema['properties']['users']['type'])->toBe('array')
             ->and($schema['properties']['users']['items']['type'])->toBe('object')
             ->and($schema['properties']['users']['items']['properties'])->toHaveKey('name')
@@ -128,9 +127,9 @@ describe('Schema Facade', function () {
             $builder->description('A schema with descriptions');
             $builder->string('name')->description('The user name');
             $builder->string('email')->description('The user email address');
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema)->toHaveKey('description', 'A schema with descriptions')
             ->and($schema['properties']['name'])->toHaveKey('description', 'The user name')
             ->and($schema['properties']['email'])->toHaveKey('description', 'The user email address');
@@ -141,9 +140,9 @@ describe('Schema Facade', function () {
             $builder->boolean('notifications')->default(true);
             $builder->string('theme')->default('light');
             $builder->int('pageSize')->default(10);
-        });
+        })->toArray();
 
-        expect($schema)->toBeInstanceOf(Struct::class)
+        expect($schema)->toBeArray()
             ->and($schema['properties']['notifications']['default'])->toBe(true)
             ->and($schema['properties']['theme']['default'])->toBe('light')
             ->and($schema['properties']['pageSize']['default'])->toBe(10);

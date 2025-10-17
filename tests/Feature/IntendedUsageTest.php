@@ -17,9 +17,9 @@ it('works with the intended API usage', function () {
             $table->string('city', 'City name')->required();
             $table->string('zip', 'ZIP code')->required();
         }, 'The address of the user');
-    });
+    })->toArray();
 
-    expect($schema)->toBeInstanceOf(Struct::class)
+    expect($schema)->toBeArray()
         ->and($schema['type'])->toBe('object')
         ->and($schema['properties'])->toHaveKey('name')
         ->and($schema['properties'])->toHaveKey('age')

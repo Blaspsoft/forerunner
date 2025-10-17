@@ -20,6 +20,8 @@ class Builder
 
     protected ?string $title = null;
 
+    protected bool $isStrict = false;
+
     public function __construct(string $name)
     {
         $this->name = $name;
@@ -226,6 +228,7 @@ class Builder
      */
     public function strict(): self
     {
+        $this->isStrict = true;
         $this->additionalProperties = false;
 
         // Mark all properties as required
@@ -234,6 +237,14 @@ class Builder
         }
 
         return $this;
+    }
+
+    /**
+     * Check if strict mode is enabled.
+     */
+    public function isStrict(): bool
+    {
+        return $this->isStrict;
     }
 
     /**
