@@ -22,9 +22,14 @@ class Struct implements \JsonSerializable
     /**
      * Define a new structure schema.
      */
-    public static function define(string $name, callable $callback): self
+    public static function define(string $name, callable $callback, ?string $description = null): self
     {
         $builder = new Builder($name);
+
+        if ($description !== null) {
+            $builder->description($description);
+        }
+
         $callback($builder);
 
         return new self($name, $builder);
