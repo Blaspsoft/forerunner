@@ -5,7 +5,7 @@ use Blaspsoft\Forerunner\Schema\Builder;
 use Blaspsoft\Forerunner\Schema\Struct;
 
 it('works with the intended API usage', function () {
-    $schema = Struct::define('User', function (Builder $builder) {
+    $schema = Struct::define('User', null, function (Builder $builder) {
         $builder->string('name', 'The name of the user')->minLength(1)->maxLength(100)->required();
         $builder->int('age', 'The age of the user')->min(0)->max(150);
         $builder->boolean('is_active', 'Is the user active?')->default(true);

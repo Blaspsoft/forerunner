@@ -6,7 +6,7 @@ use Blaspsoft\Forerunner\Schema\Builder;
 
 describe('Schema Facade', function () {
     it('can define a schema using the facade', function () {
-        $schema = Schema::define('User', function (Builder $builder) {
+        $schema = Schema::define('User', null, function (Builder $builder) {
             $builder->string('name')->required();
             $builder->string('email')->required();
         })->toArray();
@@ -20,7 +20,7 @@ describe('Schema Facade', function () {
     });
 
     it('can define complex schemas using the facade', function () {
-        $schema = Schema::define('BlogPost', function (Builder $builder) {
+        $schema = Schema::define('BlogPost', null, function (Builder $builder) {
             $builder->string('title')->required();
             $builder->string('content')->required();
             $builder->object('author', function (Builder $author) {
@@ -41,7 +41,7 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with all field types', function () {
-        $schema = Schema::define('CompleteExample', function (Builder $builder) {
+        $schema = Schema::define('CompleteExample', null, function (Builder $builder) {
             $builder->string('text');
             $builder->int('count');
             $builder->float('price');
@@ -61,7 +61,7 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with validation constraints', function () {
-        $schema = Schema::define('ValidationExample', function (Builder $builder) {
+        $schema = Schema::define('ValidationExample', null, function (Builder $builder) {
             $builder->string('username')
                 ->required()
                 ->minLength(3)
@@ -86,7 +86,7 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with nested objects', function () {
-        $schema = Schema::define('Company', function (Builder $builder) {
+        $schema = Schema::define('Company', null, function (Builder $builder) {
             $builder->string('name')->required();
             $builder->object('address', function (Builder $address) {
                 $address->string('street');
@@ -107,7 +107,7 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with array of objects', function () {
-        $schema = Schema::define('UserList', function (Builder $builder) {
+        $schema = Schema::define('UserList', null, function (Builder $builder) {
             $builder->array('users')->items('object', function (Builder $user) {
                 $user->string('name')->required();
                 $user->string('email')->required();
@@ -124,7 +124,7 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with descriptions', function () {
-        $schema = Schema::define('DescribedSchema', function (Builder $builder) {
+        $schema = Schema::define('DescribedSchema', null, function (Builder $builder) {
             $builder->description('A schema with descriptions');
             $builder->string('name')->description('The user name');
             $builder->string('email')->description('The user email address');
@@ -137,7 +137,7 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with default values', function () {
-        $schema = Schema::define('DefaultsExample', function (Builder $builder) {
+        $schema = Schema::define('DefaultsExample', null, function (Builder $builder) {
             $builder->boolean('notifications')->default(true);
             $builder->string('theme')->default('light');
             $builder->int('pageSize')->default(10);

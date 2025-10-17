@@ -6,7 +6,7 @@ use Blaspsoft\Forerunner\Schema\Struct;
 
 describe('Struct', function () {
     it('can define a simple schema', function () {
-        $struct = Struct::define('User', function (Builder $builder) {
+        $struct = Struct::define('User', null, function (Builder $builder) {
             $builder->string('name');
             $builder->string('email');
         });
@@ -21,7 +21,7 @@ describe('Struct', function () {
     });
 
     it('returns a Struct instance from define method', function () {
-        $struct = Struct::define('Simple', function (Builder $builder) {
+        $struct = Struct::define('Simple', null, function (Builder $builder) {
             $builder->string('field');
         });
 
@@ -29,7 +29,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with required fields', function () {
-        $schema = Struct::define('User', function (Builder $builder) {
+        $schema = Struct::define('User', null, function (Builder $builder) {
             $builder->string('name')->required();
             $builder->string('email')->required();
             $builder->int('age');
@@ -41,7 +41,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with nested objects', function () {
-        $schema = Struct::define('Post', function (Builder $builder) {
+        $schema = Struct::define('Post', null, function (Builder $builder) {
             $builder->string('title')->required();
             $builder->object('author', function (Builder $nested) {
                 $nested->string('name')->required();
@@ -58,7 +58,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with array fields', function () {
-        $schema = Struct::define('Product', function (Builder $builder) {
+        $schema = Struct::define('Product', null, function (Builder $builder) {
             $builder->string('name');
             $builder->array('tags')->items('string');
         })->toArray();
@@ -69,7 +69,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with enum fields', function () {
-        $schema = Struct::define('User', function (Builder $builder) {
+        $schema = Struct::define('User', null, function (Builder $builder) {
             $builder->string('name');
             $builder->enum('role', ['admin', 'user', 'guest']);
         })->toArray();
@@ -80,7 +80,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with all primitive types', function () {
-        $schema = Struct::define('AllTypes', function (Builder $builder) {
+        $schema = Struct::define('AllTypes', null, function (Builder $builder) {
             $builder->string('text');
             $builder->int('count');
             $builder->float('price');
@@ -96,7 +96,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with property constraints', function () {
-        $schema = Struct::define('User', function (Builder $builder) {
+        $schema = Struct::define('User', null, function (Builder $builder) {
             $builder->string('username')
                 ->required()
                 ->minLength(3)
@@ -113,7 +113,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with description', function () {
-        $schema = Struct::define('User', function (Builder $builder) {
+        $schema = Struct::define('User', null, function (Builder $builder) {
             $builder->description('A user object');
             $builder->string('name');
         })->toArray();
@@ -122,7 +122,7 @@ describe('Struct', function () {
     });
 
     it('can define complex nested schema', function () {
-        $schema = Struct::define('BlogPost', function (Builder $builder) {
+        $schema = Struct::define('BlogPost', null, function (Builder $builder) {
             $builder->string('title')->required();
             $builder->string('content')->required();
             $builder->object('author', function (Builder $author) {
@@ -153,7 +153,7 @@ describe('Struct', function () {
     });
 
     it('can define empty schema', function () {
-        $schema = Struct::define('Empty', function (Builder $builder) {
+        $schema = Struct::define('Empty', null, function (Builder $builder) {
             // No properties
         })->toArray();
 
@@ -164,7 +164,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with default values', function () {
-        $schema = Struct::define('Settings', function (Builder $builder) {
+        $schema = Struct::define('Settings', null, function (Builder $builder) {
             $builder->boolean('notifications')->default(true);
             $builder->string('theme')->default('light');
             $builder->int('pageSize')->default(10);
@@ -176,7 +176,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with pattern validation', function () {
-        $schema = Struct::define('Contact', function (Builder $builder) {
+        $schema = Struct::define('Contact', null, function (Builder $builder) {
             $builder->string('email')->pattern('^[^@]+@[^@]+\.[^@]+$');
             $builder->string('phone')->pattern('^\d{3}-\d{3}-\d{4}$');
         })->toArray();
@@ -186,7 +186,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with deeply nested objects', function () {
-        $schema = Struct::define('Company', function (Builder $builder) {
+        $schema = Struct::define('Company', null, function (Builder $builder) {
             $builder->string('name');
             $builder->object('address', function (Builder $address) {
                 $address->string('street');
@@ -206,7 +206,7 @@ describe('Struct', function () {
     });
 
     it('can define schema with array constraints', function () {
-        $schema = Struct::define('List', function (Builder $builder) {
+        $schema = Struct::define('List', null, function (Builder $builder) {
             $builder->array('items')
                 ->minItems(1)
                 ->maxItems(10)
@@ -219,7 +219,7 @@ describe('Struct', function () {
     });
 
     it('can be serialized with json_encode', function () {
-        $schema = Struct::define('User', function (Builder $builder) {
+        $schema = Struct::define('User', null, function (Builder $builder) {
             $builder->string('name')->required();
         });
 

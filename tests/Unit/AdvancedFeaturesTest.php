@@ -342,7 +342,7 @@ describe('Advanced Features', function () {
 
     describe('complete schema with all features', function () {
         it('generates comprehensive schema with all features in OpenAI format when strict', function () {
-            $schema = Struct::define('CompleteExample', function (Builder $builder) {
+            $schema = Struct::define('CompleteExample', null, function (Builder $builder) {
                 $builder->schemaVersion();
                 $builder->title('Complete Schema Example');
                 $builder->description('A comprehensive schema demonstrating all features');
@@ -388,7 +388,7 @@ describe('Advanced Features', function () {
         });
 
         it('generates normal schema without strict mode', function () {
-            $schema = Struct::define('NormalExample', function (Builder $builder) {
+            $schema = Struct::define('NormalExample', null, function (Builder $builder) {
                 $builder->title('Normal Schema Example');
                 $builder->uuid('id')->required();
                 $builder->email('email')->required();
