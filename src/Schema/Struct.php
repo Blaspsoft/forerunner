@@ -6,14 +6,14 @@ namespace Blaspsoft\Forerunner\Schema;
 
 class Struct implements \JsonSerializable
 {
-    protected Builder $builder;
+    protected Property $builder;
 
     protected string $name;
 
     /** @var array<string, mixed>|null */
     protected ?array $cache = null;
 
-    protected function __construct(string $name, Builder $builder)
+    protected function __construct(string $name, Property $builder)
     {
         $this->name = $name;
         $this->builder = $builder;
@@ -24,7 +24,7 @@ class Struct implements \JsonSerializable
      */
     public static function define(string $name, string $description, callable $callback): self
     {
-        $builder = new Builder($name);
+        $builder = new Property($name);
         $builder->description($description);
 
         $callback($builder);

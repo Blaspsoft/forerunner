@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Blaspsoft\Forerunner\Schema;
 
-class Builder
+class Property
 {
     protected string $name;
 
@@ -98,7 +98,7 @@ class Builder
      */
     public function object(string $name, callable $callback, ?string $description = null): PropertyBuilder
     {
-        $nestedBuilder = new Builder($name);
+        $nestedBuilder = new Property($name);
         $callback($nestedBuilder);
 
         $builder = new PropertyBuilder($name, 'object', $description);

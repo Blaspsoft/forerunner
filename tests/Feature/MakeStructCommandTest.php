@@ -50,7 +50,7 @@ it('generates struct with correct imports', function () {
     $content = File::get($this->testFilePath);
 
     expect($content)->toContain('use Blaspsoft\Forerunner\Schema\Struct;')
-        ->and($content)->toContain('use Blaspsoft\Forerunner\Schema\Builder;');
+        ->and($content)->toContain('use Blaspsoft\Forerunner\Schema\Property;');
 });
 
 it('generates struct with schema method', function () {
@@ -70,7 +70,7 @@ it('generates struct with strict mode by default', function () {
 
     $content = File::get($this->testFilePath);
 
-    expect($content)->toContain('$builder->strict()');
+    expect($content)->toContain('$property->strict()');
 });
 
 it('converts PascalCase to snake_case for struct name', function () {

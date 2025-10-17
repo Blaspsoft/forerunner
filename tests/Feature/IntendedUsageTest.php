@@ -1,22 +1,22 @@
 <?php
 
 declare(strict_types=1);
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 use Blaspsoft\Forerunner\Schema\Struct;
 
 it('works with the intended API usage', function () {
-    $schema = Struct::define('User', 'A user object with personal information', function (Builder $builder) {
-        $builder->string('name', 'The name of the user')->minLength(1)->maxLength(100)->required();
-        $builder->int('age', 'The age of the user')->min(0)->max(150);
-        $builder->boolean('is_active', 'Is the user active?')->default(true);
-        $builder->array('tags', 'Tags associated with the user')
+    $schema = Struct::define('User', 'A user object with personal information', function (Property $property) {
+        $property->string('name', 'The name of the user')->minLength(1)->maxLength(100)->required();
+        $property->int('age', 'The age of the user')->min(0)->max(150);
+        $property->boolean('is_active', 'Is the user active?')->default(true);
+        $property->array('tags', 'Tags associated with the user')
             ->items('string')
             ->minItems(0)
             ->maxItems(10);
-        $builder->object('address', function (Builder $table) {
-            $table->string('street', 'Street name')->required();
-            $table->string('city', 'City name')->required();
-            $table->string('zip', 'ZIP code')->required();
+        $property->object('address', function (Property $address) {
+            $address->string('street', 'Street name')->required();
+            $address->string('city', 'City name')->required();
+            $address->string('zip', 'ZIP code')->required();
         }, 'The address of the user');
     })->toArray();
 

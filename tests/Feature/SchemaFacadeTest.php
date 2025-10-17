@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 use Blaspsoft\Forerunner\Facades\Schema;
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 
 describe('Schema Facade', function () {
     it('can define a schema using the facade', function () {
-        $schema = Schema::define('User', 'A user schema', function (Builder $builder) {
-            $builder->string('name')->required();
-            $builder->string('email')->required();
+        $schema = Schema::define('User', 'A user schema', function (Property $property) {
+            $property->string('name')->required();
+            $property->string('email')->required();
         })->toArray();
 
         expect($schema)->toBeArray()
@@ -20,15 +20,15 @@ describe('Schema Facade', function () {
     });
 
     it('can define complex schemas using the facade', function () {
-        $schema = Schema::define('BlogPost', 'A blog post schema', function (Builder $builder) {
-            $builder->string('title')->required();
-            $builder->string('content')->required();
-            $builder->object('author', function (Builder $author) {
+        $schema = Schema::define('BlogPost', 'A blog post schema', function (Property $property) {
+            $property->string('title')->required();
+            $property->string('content')->required();
+            $property->object('author', function (Property $author) {
                 $author->string('name')->required();
                 $author->string('email')->required();
             })->required();
-            $builder->array('tags')->items('string');
-            $builder->enum('status', ['draft', 'published', 'archived'])->default('draft');
+            $property->array('tags')->items('string');
+            $property->enum('status', ['draft', 'published', 'archived'])->default('draft');
         })->toArray();
 
         expect($schema)->toBeArray()
@@ -41,13 +41,13 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with all field types', function () {
-        $schema = Schema::define('CompleteExample', 'Complete example schema', function (Builder $builder) {
-            $builder->string('text');
-            $builder->int('count');
-            $builder->float('price');
-            $builder->boolean('isActive');
-            $builder->array('items');
-            $builder->enum('role', ['admin', 'user']);
+        $schema = Schema::define('CompleteExample', 'Complete example schema', function (Property $property) {
+            $property->string('text');
+            $property->int('count');
+            $property->float('price');
+            $property->boolean('isActive');
+            $property->array('items');
+            $property->enum('role', ['admin', 'user']);
         })->toArray();
 
         expect($schema)->toBeArray()
@@ -61,16 +61,16 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with validation constraints', function () {
-        $schema = Schema::define('ValidationExample', 'Validation example schema', function (Builder $builder) {
-            $builder->string('username')
+        $schema = Schema::define('ValidationExample', 'Validation example schema', function (Property $property) {
+            $property->string('username')
                 ->required()
                 ->minLength(3)
                 ->maxLength(50)
                 ->pattern('^[a-zA-Z0-9_]+$');
-            $builder->int('age')
+            $property->int('age')
                 ->min(0)
                 ->max(150);
-            $builder->array('tags')
+            $property->array('tags')
                 ->minItems(1)
                 ->maxItems(10);
         })->toArray();
@@ -86,12 +86,12 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with nested objects', function () {
-        $schema = Schema::define('Company', 'Company information', function (Builder $builder) {
-            $builder->string('name')->required();
-            $builder->object('address', function (Builder $address) {
+        $schema = Schema::define('Company', 'Company information', function (Property $property) {
+            $property->string('name')->required();
+            $property->object('address', function (Property $address) {
                 $address->string('street');
                 $address->string('city');
-                $address->object('coordinates', function (Builder $coords) {
+                $address->object('coordinates', function (Property $coords) {
                     $coords->float('latitude');
                     $coords->float('longitude');
                 });
@@ -107,8 +107,8 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with array of objects', function () {
-        $schema = Schema::define('UserList', 'A list of users', function (Builder $builder) {
-            $builder->array('users')->items('object', function (Builder $user) {
+        $schema = Schema::define('UserList', 'A list of users', function (Property $property) {
+            $property->array('users')->items('object', function (Property $user) {
                 $user->string('name')->required();
                 $user->string('email')->required();
                 $user->int('age');
@@ -124,10 +124,10 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with descriptions', function () {
-        $schema = Schema::define('DescribedSchema', 'A schema with descriptions', function (Builder $builder) {
-            $builder->description('A schema with descriptions');
-            $builder->string('name')->description('The user name');
-            $builder->string('email')->description('The user email address');
+        $schema = Schema::define('DescribedSchema', 'A schema with descriptions', function (Property $property) {
+            $property->description('A schema with descriptions');
+            $property->string('name')->description('The user name');
+            $property->string('email')->description('The user email address');
         })->toArray();
 
         expect($schema)->toBeArray()
@@ -137,10 +137,10 @@ describe('Schema Facade', function () {
     });
 
     it('can define schemas with default values', function () {
-        $schema = Schema::define('DefaultsExample', 'Schema with defaults', function (Builder $builder) {
-            $builder->boolean('notifications')->default(true);
-            $builder->string('theme')->default('light');
-            $builder->int('pageSize')->default(10);
+        $schema = Schema::define('DefaultsExample', 'Schema with defaults', function (Property $property) {
+            $property->boolean('notifications')->default(true);
+            $property->string('theme')->default('light');
+            $property->int('pageSize')->default(10);
         })->toArray();
 
         expect($schema)->toBeArray()

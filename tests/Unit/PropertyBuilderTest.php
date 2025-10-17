@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 use Blaspsoft\Forerunner\Schema\PropertyBuilder;
 
 describe('PropertyBuilder', function () {
@@ -155,9 +155,9 @@ describe('PropertyBuilder', function () {
 
     it('can set items with nested object for arrays', function () {
         $property = new PropertyBuilder('users', 'array');
-        $result = $property->items('object', function (Builder $builder) {
-            $builder->string('name');
-            $builder->string('email');
+        $result = $property->items('object', function (Property $property) {
+            $property->string('name');
+            $property->string('email');
         });
 
         expect($result)->toBe($property);
@@ -170,7 +170,7 @@ describe('PropertyBuilder', function () {
     });
 
     it('can set nested builder for objects', function () {
-        $builder = new Builder('nested');
+        $builder = new Property('nested');
         $builder->string('field');
 
         $property = new PropertyBuilder('data', 'object');
@@ -251,7 +251,7 @@ describe('PropertyBuilder', function () {
     });
 
     it('merges nested builder schema correctly', function () {
-        $builder = new Builder('user');
+        $builder = new Property('user');
         $builder->string('name')->required();
         $builder->string('email')->required();
 

@@ -3,7 +3,7 @@
 namespace {{ namespace }};
 
 use Blaspsoft\Forerunner\Schema\Struct;
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 
 class {{ class }}
 {
@@ -14,11 +14,11 @@ class {{ class }}
      */
     public static function schema(): array
     {
-        return Struct::define('{{ structName }}', 'Description of {{ structName }}', function (Builder $builder) {
-            $builder->string('example_field');
+        return Struct::define('{{ structName }}', 'Description of {{ structName }}', function (Property $property) {
+            $property->string('example_field');
             // Add your fields here
 
-            $builder->strict(); // All fields required + no additional properties
+            $property->strict(); // All fields required + no additional properties
         })->toArray();
     }
 }

@@ -45,13 +45,13 @@ This creates a structure class at `app/Structures/UserProfile.php`:
 namespace App\Structures;
 
 use Blaspsoft\Forerunner\Schema\Struct;
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 
 class UserProfile
 {
     public static function schema(): array
     {
-        return Struct::define('user_profile', function (Builder $table) {
+        return Struct::define('user_profile', function (Property $table) {
             $table->string('example_field')->required();
             // Add your fields here
         });
@@ -65,13 +65,13 @@ Define a schema using the `Struct` class or `Schema` facade:
 
 ```php
 use Blaspsoft\Forerunner\Schema\Struct;
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Struct::define('User', function (Builder $builder) {
-    $builder->string('name', 'The user\'s full name')->required();
-    $builder->string('email', 'The user\'s email address')->required();
-    $builder->int('age', 'The user\'s age')->min(0)->max(150);
-    $builder->boolean('is_active', 'Is the user account active?')->default(true);
+$schema = Struct::define('User', function (Property $property) {
+    $property->string('name', 'The user\'s full name')->required();
+    $property->string('email', 'The user\'s email address')->required();
+    $property->int('age', 'The user\'s age')->min(0)->max(150);
+    $property->boolean('is_active', 'Is the user account active?')->default(true);
 });
 ```
 
@@ -79,11 +79,11 @@ Or using the facade:
 
 ```php
 use Blaspsoft\Forerunner\Facades\Schema;
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Schema::define('User', function (Builder $builder) {
-    $builder->string('name')->required();
-    $builder->string('email')->required();
+$schema = Schema::define('User', function (Property $property) {
+    $property->string('name')->required();
+    $property->string('email')->required();
 });
 ```
 
@@ -92,7 +92,7 @@ $schema = Schema::define('User', function (Builder $builder) {
 ### String Fields
 
 ```php
-$builder->string('username', 'The username')
+$property->string('username', 'The username')
     ->minLength(3)
     ->maxLength(50)
     ->pattern('^[a-zA-Z0-9_]+$')
@@ -102,47 +102,47 @@ $builder->string('username', 'The username')
 ### Integer Fields
 
 ```php
-$builder->int('age', 'User age')
+$property->int('age', 'User age')
     ->min(0)
     ->max(150)
     ->default(18);
 
 // Alias
-$builder->integer('count');
+$property->integer('count');
 ```
 
 ### Float/Number Fields
 
 ```php
-$builder->float('price', 'Product price')
+$property->float('price', 'Product price')
     ->min(0.0)
     ->max(9999.99);
 
 // Alias
-$builder->number('rating')->min(0)->max(5);
+$property->number('rating')->min(0)->max(5);
 ```
 
 ### Boolean Fields
 
 ```php
-$builder->boolean('is_active', 'Account status')
+$property->boolean('is_active', 'Account status')
     ->default(true);
 
 // Alias
-$builder->bool('verified');
+$property->bool('verified');
 ```
 
 ### Array Fields
 
 ```php
 // Simple array
-$builder->array('tags', 'User tags')
+$property->array('tags', 'User tags')
     ->items('string')
     ->minItems(1)
     ->maxItems(10);
 
 // Array of objects
-$builder->array('addresses')->items('object', function (Builder $item) {
+$property->array('addresses')->items('object', function (Property $item) {
     $item->string('street')->required();
     $item->string('city')->required();
     $item->string('zip')->required();
@@ -152,20 +152,20 @@ $builder->array('addresses')->items('object', function (Builder $item) {
 ### Enum Fields
 
 ```php
-$builder->enum('role', ['admin', 'user', 'guest'], 'User role')
+$property->enum('role', ['admin', 'user', 'guest'], 'User role')
     ->default('user');
 
-$builder->enum('status', ['draft', 'published', 'archived']);
+$property->enum('status', ['draft', 'published', 'archived']);
 ```
 
 ### Object Fields
 
 ```php
-$builder->object('address', function (Builder $nested) {
+$property->object('address', function (Property $nested) {
     $nested->string('street', 'Street address')->required();
     $nested->string('city', 'City name')->required();
     $nested->string('zip', 'ZIP code')->required();
-    $nested->object('coordinates', function (Builder $coords) {
+    $nested->object('coordinates', function (Property $coords) {
         $coords->float('latitude')->required();
         $coords->float('longitude')->required();
     });
@@ -177,7 +177,7 @@ $builder->object('address', function (Builder $nested) {
 ### String Constraints
 
 ```php
-$builder->string('username')
+$property->string('username')
     ->minLength(3)              // Minimum length
     ->maxLength(50)             // Maximum length
     ->pattern('^[a-zA-Z0-9]+$') // Regex pattern
@@ -187,7 +187,7 @@ $builder->string('username')
 ### Numeric Constraints
 
 ```php
-$builder->int('age')
+$property->int('age')
     ->min(0)          // Minimum value
     ->max(150)        // Maximum value
     ->default(18);    // Default value
@@ -196,7 +196,7 @@ $builder->int('age')
 ### Array Constraints
 
 ```php
-$builder->array('tags')
+$property->array('tags')
     ->items('string')  // Type of array items
     ->minItems(1)      // Minimum array length
     ->maxItems(10);    // Maximum array length
@@ -205,7 +205,7 @@ $builder->array('tags')
 ### General Constraints
 
 ```php
-$builder->string('field')
+$property->string('field')
     ->required()                    // Mark as required
     ->optional()                    // Mark as optional (default)
     ->default('value')              // Set default value
@@ -220,31 +220,31 @@ Forerunner provides convenient helper methods for commonly used field formats:
 
 ```php
 // Email field with automatic format validation
-$builder->email('email')->required();
+$property->email('email')->required();
 
 // URL field
-$builder->url('website');
+$property->url('website');
 
 // UUID field
-$builder->uuid('id')->required();
+$property->uuid('id')->required();
 
 // Date-time field (ISO 8601)
-$builder->datetime('created_at');
+$property->datetime('created_at');
 
 // Date field
-$builder->date('birth_date');
+$property->date('birth_date');
 
 // Time field
-$builder->time('start_time');
+$property->time('start_time');
 
 // IPv4 address
-$builder->ipv4('ip_address');
+$property->ipv4('ip_address');
 
 // IPv6 address
-$builder->ipv6('ipv6_address');
+$property->ipv6('ipv6_address');
 
 // Hostname
-$builder->hostname('server_name');
+$property->hostname('server_name');
 ```
 
 ### String Format Validation
@@ -252,9 +252,9 @@ $builder->hostname('server_name');
 You can also set custom formats on string fields:
 
 ```php
-$builder->string('email')->format('email');
-$builder->string('website')->format('uri');
-$builder->string('id')->format('uuid');
+$property->string('email')->format('email');
+$property->string('website')->format('uri');
+$property->string('id')->format('uuid');
 ```
 
 Supported formats: `email`, `uri`, `url`, `uuid`, `date`, `date-time`, `time`, `ipv4`, `ipv6`, `hostname`, and more.
@@ -264,10 +264,10 @@ Supported formats: `email`, `uri`, `url`, `uuid`, `date`, `date-time`, `time`, `
 Mark fields as nullable to allow both the specified type and null:
 
 ```php
-$builder->string('middle_name')->nullable();
+$property->string('middle_name')->nullable();
 // Generates: {"type": ["string", "null"]}
 
-$builder->object('address', function (Builder $nested) {
+$property->object('address', function (Property $nested) {
     $nested->string('street')->required();
     $nested->string('city')->required();
 })->nullable();
@@ -279,7 +279,7 @@ $builder->object('address', function (Builder $nested) {
 Ensure array items are unique:
 
 ```php
-$builder->array('tags')
+$property->array('tags')
     ->items('string')
     ->uniqueItems();
 ```
@@ -290,13 +290,13 @@ Control whether objects can have properties not defined in the schema:
 
 ```php
 // Allow additional properties
-$builder->additionalProperties(true);
+$property->additionalProperties(true);
 
 // Disallow additional properties
-$builder->additionalProperties(false); // This is the default
+$property->additionalProperties(false); // This is the default
 
 // Or use the convenient strict() helper
-$builder->strict(); // Disallows additional properties AND marks all fields as required
+$property->strict(); // Disallows additional properties AND marks all fields as required
 ```
 
 #### Strict Mode for LLM APIs
@@ -307,13 +307,13 @@ The `strict()` method is particularly useful for LLM APIs like **OpenAI Structur
 
 ```php
 // Perfect for OpenAI Structured Outputs
-$schema = Struct::define('User', function (Builder $builder) {
-    $builder->string('fullname');
-    $builder->email('email');
-    $builder->int('age')->min(0)->max(120);
-    $builder->string('location');
+$schema = Struct::define('User', function (Property $property) {
+    $property->string('fullname');
+    $property->email('email');
+    $property->int('age')->min(0)->max(120);
+    $property->string('location');
 
-    $builder->strict(); // Makes all fields required + disallows extra properties
+    $property->strict(); // Makes all fields required + disallows extra properties
 });
 ```
 
@@ -334,15 +334,15 @@ This generates:
 Add metadata to your schemas:
 
 ```php
-$builder->title('User Schema');
-$builder->description('Schema for user data validation');
-$builder->schemaVersion('https://json-schema.org/draft/2020-12/schema');
+$property->title('User Schema');
+$property->description('Schema for user data validation');
+$property->schemaVersion('https://json-schema.org/draft/2020-12/schema');
 ```
 
 You can also add titles to individual fields:
 
 ```php
-$builder->string('email')
+$property->string('email')
     ->title('Email Address')
     ->description('User\'s primary email address')
     ->format('email')
@@ -353,36 +353,36 @@ $builder->string('email')
 
 ```php
 use Blaspsoft\Forerunner\Schema\Struct;
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Struct::define('AdvancedUser', function (Builder $builder) {
+$schema = Struct::define('AdvancedUser', function (Property $property) {
     // Schema metadata
-    $builder->schemaVersion();
-    $builder->title('Advanced User Schema');
-    $builder->description('Comprehensive user data structure');
-    $builder->strict(); // Disallow additional properties
+    $property->schemaVersion();
+    $property->title('Advanced User Schema');
+    $property->description('Comprehensive user data structure');
+    $property->strict(); // Disallow additional properties
 
     // Helper methods
-    $builder->uuid('id')->required();
-    $builder->email('email')->required();
-    $builder->url('website')->nullable();
-    $builder->datetime('created_at')->required();
+    $property->uuid('id')->required();
+    $property->email('email')->required();
+    $property->url('website')->nullable();
+    $property->datetime('created_at')->required();
 
     // Nullable nested object
-    $builder->object('profile', function (Builder $profile) {
+    $property->object('profile', function (Property $profile) {
         $profile->string('bio')->maxLength(500);
         $profile->string('avatar_url')->format('uri');
     })->nullable();
 
     // Array with unique items
-    $builder->array('tags')
+    $property->array('tags')
         ->items('string')
         ->uniqueItems()
         ->minItems(1)
         ->maxItems(10);
 
     // Advanced field configuration
-    $builder->string('username')
+    $property->string('username')
         ->title('Username')
         ->description('Unique username for the account')
         ->minLength(3)
@@ -459,31 +459,31 @@ This generates:
 
 ```php
 use Blaspsoft\Forerunner\Schema\Struct;
-use Blaspsoft\Forerunner\Schema\Builder;
+use Blaspsoft\Forerunner\Schema\Property;
 
-$schema = Struct::define('UserProfile', function (Builder $builder) {
-    $builder->string('name', 'The user\'s full name')
+$schema = Struct::define('UserProfile', function (Property $property) {
+    $property->string('name', 'The user\'s full name')
         ->minLength(1)
         ->maxLength(100)
         ->required();
 
-    $builder->string('email', 'The user\'s email')
+    $property->string('email', 'The user\'s email')
         ->pattern('^[^\s@]+@[^\s@]+\.[^\s@]+$')
         ->required();
 
-    $builder->int('age', 'The user\'s age')
+    $property->int('age', 'The user\'s age')
         ->min(0)
         ->max(150);
 
-    $builder->boolean('is_active', 'Is the account active?')
+    $property->boolean('is_active', 'Is the account active?')
         ->default(true);
 
-    $builder->array('tags', 'User tags')
+    $property->array('tags', 'User tags')
         ->items('string')
         ->minItems(0)
         ->maxItems(10);
 
-    $builder->object('address', function (Builder $address) {
+    $property->object('address', function (Property $address) {
         $address->string('street', 'Street name')->required();
         $address->string('city', 'City name')->required();
         $address->string('state', 'State/Province')->required();
@@ -491,7 +491,7 @@ $schema = Struct::define('UserProfile', function (Builder $builder) {
         $address->string('country', 'Country code')->required();
     }, 'User\'s address');
 
-    $builder->enum('role', ['admin', 'moderator', 'user'], 'User role')
+    $property->enum('role', ['admin', 'moderator', 'user'], 'User role')
         ->default('user');
 });
 ```
@@ -499,30 +499,30 @@ $schema = Struct::define('UserProfile', function (Builder $builder) {
 ### Blog Post with Comments
 
 ```php
-$schema = Struct::define('BlogPost', function (Builder $builder) {
-    $builder->string('title')->required();
-    $builder->string('content')->required();
-    $builder->string('slug')->pattern('^[a-z0-9-]+$')->required();
+$schema = Struct::define('BlogPost', function (Property $property) {
+    $property->string('title')->required();
+    $property->string('content')->required();
+    $property->string('slug')->pattern('^[a-z0-9-]+$')->required();
 
-    $builder->object('author', function (Builder $author) {
+    $property->object('author', function (Property $author) {
         $author->string('name')->required();
         $author->string('email')->required();
         $author->string('bio');
     })->required();
 
-    $builder->array('comments')->items('object', function (Builder $comment) {
+    $property->array('comments')->items('object', function (Property $comment) {
         $comment->string('text')->required();
         $comment->string('author_name')->required();
         $comment->string('author_email')->required();
         $comment->int('timestamp')->required();
     });
 
-    $builder->array('tags')->items('string')->minItems(1);
+    $property->array('tags')->items('string')->minItems(1);
 
-    $builder->enum('status', ['draft', 'published', 'archived'])
+    $property->enum('status', ['draft', 'published', 'archived'])
         ->default('draft');
 
-    $builder->int('views')->min(0)->default(0);
+    $property->int('views')->min(0)->default(0);
 });
 ```
 
@@ -535,9 +535,9 @@ The `Struct::define()` method returns a `Struct` object that provides multiple w
 Forerunner schemas support both array-like access and object methods for maximum flexibility:
 
 ```php
-$schema = Struct::define('User', function (Builder $builder) {
-    $builder->string('name')->required();
-    $builder->string('email')->required();
+$schema = Struct::define('User', function (Property $property) {
+    $property->string('name')->required();
+    $property->string('email')->required();
 });
 
 // Access as an array (for backward compatibility)
@@ -549,16 +549,16 @@ $array = $schema->toArray();  // Get as PHP array
 $json = $schema->toJson();    // Get as JSON string
 
 // Method chaining works too!
-$json = Struct::define('User', function (Builder $builder) {
-    $builder->string('name')->required();
+$json = Struct::define('User', function (Property $property) {
+    $property->string('name')->required();
 })->toJson();
 ```
 
 ### Convert to Array
 
 ```php
-$schema = Struct::define('User', function (Builder $builder) {
-    $builder->string('name')->required();
+$schema = Struct::define('User', function (Property $property) {
+    $property->string('name')->required();
 });
 
 // Use as array directly (implements ArrayAccess)
@@ -574,14 +574,14 @@ $array = $schema->toArray();
 
 ```php
 // Direct method chaining
-$json = Struct::define('User', function (Builder $builder) {
-    $builder->string('name')->required();
-    $builder->email('email')->required();
+$json = Struct::define('User', function (Property $property) {
+    $property->string('name')->required();
+    $property->email('email')->required();
 })->toJson();
 
 // Or call toJson() on the schema object
-$schema = Struct::define('User', function (Builder $builder) {
-    $builder->string('name')->required();
+$schema = Struct::define('User', function (Property $property) {
+    $property->string('name')->required();
 });
 $json = $schema->toJson();
 
@@ -593,8 +593,8 @@ $json = $schema->toJson();
 The `Struct` object implements `JsonSerializable`, so you can use it directly with `json_encode()`:
 
 ```php
-$schema = Struct::define('User', function (Builder $builder) {
-    $builder->string('name')->required();
+$schema = Struct::define('User', function (Property $property) {
+    $property->string('name')->required();
 });
 
 // Automatic JSON serialization
@@ -611,7 +611,7 @@ class UserProfile
 {
     public static function schema(): Struct
     {
-        return Struct::define('user_profile', function (Builder $table) {
+        return Struct::define('user_profile', function (Property $table) {
             $table->string('name')->required();
             $table->string('email')->required();
         });
