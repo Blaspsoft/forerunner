@@ -9,6 +9,8 @@
     <a href="https://packagist.org/packages/blaspsoft/forerunner"><img src="https://img.shields.io/packagist/l/blaspsoft/forerunner.svg?style=flat-square" alt="License"></a>
 </p>
 
+# Forerunner - Build structured LLM outputs the Laravel way
+
 <p>
 A Laravel package that provides an elegant, migration-inspired API for defining JSON schemas that ensure your LLM responses are perfectly structured every time.
 </p>
