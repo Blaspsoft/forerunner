@@ -4,6 +4,22 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.1.4 - 2024-10-17
+
+### Changed
+- **Improved stub template**: Generated struct classes now include `$builder->strict()` by default
+  - New structs are OpenAI-ready out of the box
+  - Removed `->required()` from example field (handled by `strict()`)
+
+### Removed
+- **Removed `named()` method** from stub template
+  - Confusing method that wasn't commonly needed
+  - Simplifies generated struct classes
+
+### Technical Details
+- 120 tests passing with 403 assertions
+- Cleaner, more focused generated code
+
 ## 0.1.3 - 2024-10-17
 
 ### Changed
