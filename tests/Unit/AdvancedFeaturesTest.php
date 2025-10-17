@@ -36,6 +36,19 @@ describe('Advanced Features', function () {
             expect($schema)->toHaveKey('additionalProperties', false);
         });
 
+        it('strict() makes all fields required', function () {
+            $builder = new Builder('Test');
+            $builder->string('name');
+            $builder->email('email');
+            $builder->int('age')->min(0);
+            $builder->strict();
+
+            $schema = $builder->toArray();
+
+            expect($schema)->toHaveKey('additionalProperties', false)
+                ->and($schema['required'])->toBe(['name', 'email', 'age']);
+        });
+
         it('defaults additionalProperties to false', function () {
             $builder = new Builder('Test');
             $builder->string('name');

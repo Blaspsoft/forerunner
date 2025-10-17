@@ -221,11 +221,17 @@ class Builder
     }
 
     /**
-     * Disallow additional properties.
+     * Enable strict mode: disallow additional properties and mark all fields as required.
+     * This is useful for LLM APIs like OpenAI that require all properties to be required.
      */
     public function strict(): self
     {
         $this->additionalProperties = false;
+
+        // Mark all properties as required
+        foreach ($this->properties as $property) {
+            $property->required();
+        }
 
         return $this;
     }
