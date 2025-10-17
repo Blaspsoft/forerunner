@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 use Blaspsoft\Forerunner\Facades\Schema;
 use Blaspsoft\Forerunner\Schema\Builder;
 
