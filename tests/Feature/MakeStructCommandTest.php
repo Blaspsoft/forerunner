@@ -58,7 +58,7 @@ it('generates struct with schema method', function () {
 
     $content = File::get($this->testFilePath);
 
-    expect($content)->toContain('public static function schema(): array')
+    expect($content)->toContain('public static function schema(): Struct')
         ->and($content)->toContain("Struct::define('test_user_struct'");
 });
 
@@ -69,7 +69,7 @@ it('generates struct with toJson method', function () {
     $content = File::get($this->testFilePath);
 
     expect($content)->toContain('public static function toJson(): string')
-        ->and($content)->toContain('json_encode(static::schema(), JSON_PRETTY_PRINT)');
+        ->and($content)->toContain('static::schema()->toJson()');
 });
 
 it('generates struct with named method', function () {
@@ -78,7 +78,7 @@ it('generates struct with named method', function () {
 
     $content = File::get($this->testFilePath);
 
-    expect($content)->toContain('public static function named(string $name): array');
+    expect($content)->toContain('public static function named(string $name): Struct');
 });
 
 it('converts PascalCase to snake_case for struct name', function () {
