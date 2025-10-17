@@ -14,7 +14,7 @@ class {{ class }}
      */
     public static function schema(): array
     {
-        return Struct::define('{{ structName }}', function (Builder $builder) {
+        return Struct::define('{{ structName }}', 'Description of {{ structName }}', function (Builder $builder) {
             $builder->string('example_field');
             // Add your fields here
 
