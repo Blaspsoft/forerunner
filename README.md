@@ -1,8 +1,17 @@
-# Forerunner
+<p align="center">
+    <img src="assets/icon.png" alt="Forerunner Logo" width="150">
+</p>
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner) [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/blaspsoft/forerunner/main.yml?branch=main&label=tests&style=flat-square)](https://github.com/blaspsoft/forerunner/actions?query=workflow%3Amain+branch%3Amain) [![Total Downloads](https://img.shields.io/packagist/dt/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner) [![License](https://img.shields.io/packagist/l/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner) [![PHP Version](https://img.shields.io/packagist/php-v/blaspsoft/forerunner.svg?style=flat-square)](https://packagist.org/packages/blaspsoft/forerunner)
+<p align="center">
+    <a href="https://github.com/blaspsoft/forerunner/actions?query=workflow%3Amain+branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/blaspsoft/forerunner/main.yml?branch=main&label=tests&style=flat-square" alt="Tests"></a>
+    <a href="https://packagist.org/packages/blaspsoft/forerunner"><img src="https://img.shields.io/packagist/dt/blaspsoft/forerunner.svg?style=flat-square" alt="Total Downloads"></a>
+    <a href="https://packagist.org/packages/blaspsoft/forerunner"><img src="https://img.shields.io/packagist/v/blaspsoft/forerunner.svg?style=flat-square" alt="Latest Version on Packagist"></a>
+    <a href="https://packagist.org/packages/blaspsoft/forerunner"><img src="https://img.shields.io/packagist/l/blaspsoft/forerunner.svg?style=flat-square" alt="License"></a>
+</p>
 
+<p>
 A Laravel package that provides an elegant, migration-inspired API for defining JSON schemas that ensure your LLM responses are perfectly structured every time.
+</p>
 
 ## Installation
 
@@ -596,8 +605,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Blaspsoft](https://github.com/blaspsoft)
-- [All Contributors](../../contributors)
+-   [Blaspsoft](https://github.com/blaspsoft)
+-   [All Contributors](../../contributors)
 
 ## License
 
