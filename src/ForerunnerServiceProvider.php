@@ -18,8 +18,19 @@ class ForerunnerServiceProvider extends ServiceProvider
             'forerunner'
         );
 
-        $this->app->bind('forerunner.schema', function () {
-            return new Struct;
+        $this->app->singleton('forerunner.schema', function () {
+            return new class
+            {
+                public static function __callStatic($method, $args)
+                {
+                    return Struct::$method(...$args);
+                }
+
+                public function __call($method, $args)
+                {
+                    return Struct::$method(...$args);
+                }
+            };
         });
     }
 

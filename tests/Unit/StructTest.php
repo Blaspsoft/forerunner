@@ -5,23 +5,26 @@ use Blaspsoft\Forerunner\Schemas\Struct;
 
 describe('Struct', function () {
     it('can define a simple schema', function () {
-        $schema = Struct::define('User', function (Builder $builder) {
+        $struct = Struct::define('User', function (Builder $builder) {
             $builder->string('name');
             $builder->string('email');
         });
 
+        expect($struct)->toBeInstanceOf(Struct::class);
+
+        $schema = $struct->toArray();
         expect($schema)->toBeArray()
             ->and($schema['type'])->toBe('object')
             ->and($schema['properties'])->toHaveKey('name')
             ->and($schema['properties'])->toHaveKey('email');
     });
 
-    it('returns an array from define method', function () {
-        $schema = Struct::define('Simple', function (Builder $builder) {
+    it('returns a Struct instance from define method', function () {
+        $struct = Struct::define('Simple', function (Builder $builder) {
             $builder->string('field');
         });
 
-        expect($schema)->toBeArray();
+        expect($struct)->toBeInstanceOf(Struct::class);
     });
 
     it('can define schema with required fields', function () {
@@ -31,10 +34,22 @@ describe('Struct', function () {
             $builder->int('age');
         });
 
-        expect($schema)->toHaveKey('required')
-            ->and($schema['required'])->toContain('name')
+        // Can be used like an array
+        expect($schema['required'])->toContain('name')
             ->and($schema['required'])->toContain('email')
             ->and($schema['required'])->not->toContain('age');
+    });
+
+    it('can access struct as array via ArrayAccess', function () {
+        $schema = Struct::define('User', function (Builder $builder) {
+            $builder->string('name')->required();
+        });
+
+        // Array access works
+        expect(isset($schema['type']))->toBeTrue()
+            ->and($schema['type'])->toBe('object')
+            ->and(isset($schema['properties']))->toBeTrue()
+            ->and(isset($schema['properties']['name']))->toBeTrue();
     });
 
     it('can define schema with nested objects', function () {
@@ -213,5 +228,35 @@ describe('Struct', function () {
         expect($schema['properties']['items'])->toHaveKey('minItems', 1)
             ->and($schema['properties']['items'])->toHaveKey('maxItems', 10)
             ->and($schema['properties']['items']['items'])->toBe(['type' => 'string']);
+    });
+
+    it('can generate JSON string directly with toJson method', function () {
+        $json = Struct::define('User', function (Builder $builder) {
+            $builder->string('name')->required();
+            $builder->email('email')->required();
+        })->toJson();
+
+        expect($json)->toBeString()
+            ->and($json)->toContain('"type": "object"')
+            ->and($json)->toContain('"name"')
+            ->and($json)->toContain('"email"')
+            ->and($json)->toContain('"format": "email"')
+            ->and($json)->toContain('"required"');
+
+        $decoded = json_decode($json, true);
+        expect($decoded)->toBeArray()
+            ->and($decoded['type'])->toBe('object')
+            ->and($decoded['properties'])->toHaveKey('name')
+            ->and($decoded['properties'])->toHaveKey('email');
+    });
+
+    it('can be serialized with json_encode', function () {
+        $schema = Struct::define('User', function (Builder $builder) {
+            $builder->string('name')->required();
+        });
+
+        $json = json_encode($schema, JSON_PRETTY_PRINT);
+        expect($json)->toBeString()
+            ->and($json)->toContain('"type": "object"');
     });
 });

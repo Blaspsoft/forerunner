@@ -19,7 +19,7 @@ it('works with the intended API usage', function () {
         }, 'The address of the user');
     });
 
-    expect($schema)->toBeArray()
+    expect($schema)->toBeInstanceOf(Struct::class)
         ->and($schema['type'])->toBe('object')
         ->and($schema['properties'])->toHaveKey('name')
         ->and($schema['properties'])->toHaveKey('age')
