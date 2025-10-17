@@ -14,7 +14,7 @@ class Builder
 
     protected ?string $description = null;
 
-    protected ?bool $additionalProperties = null;
+    protected bool $additionalProperties = false;
 
     protected ?string $schemaVersion = null;
 
@@ -297,9 +297,7 @@ class Builder
             $schema['required'] = $this->required;
         }
 
-        if ($this->additionalProperties !== null) {
-            $schema['additionalProperties'] = $this->additionalProperties;
-        }
+        $schema['additionalProperties'] = $this->additionalProperties;
 
         return $schema;
     }

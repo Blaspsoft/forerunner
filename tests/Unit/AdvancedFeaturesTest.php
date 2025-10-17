@@ -36,13 +36,13 @@ describe('Advanced Features', function () {
             expect($schema)->toHaveKey('additionalProperties', false);
         });
 
-        it('does not include additionalProperties when not set', function () {
+        it('defaults additionalProperties to false', function () {
             $builder = new Builder('Test');
             $builder->string('name');
 
             $schema = $builder->toArray();
 
-            expect($schema)->not->toHaveKey('additionalProperties');
+            expect($schema)->toHaveKey('additionalProperties', false);
         });
     });
 
