@@ -4,6 +4,28 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.1.1 - 2024-10-17
+
+### Added
+- Method chaining support: `Struct::define()->toJson()` now works
+- `toArray()` method on Struct with internal caching for performance
+- `toJson()` method on Struct for direct JSON conversion
+- `ArrayAccess` implementation for backward-compatible array-like access
+- `JsonSerializable` implementation for `json_encode()` support
+
+### Changed
+- **BREAKING (minor)**: `Struct::define()` now returns a `Struct` object instead of an array
+  - Maintains backward compatibility through `ArrayAccess` - existing code using `$schema['type']` still works
+  - Enables new method chaining syntax: `Struct::define()->toJson()`
+- Service provider updated to proxy static calls to Struct via anonymous class
+- README documentation significantly expanded with method chaining examples
+- Generated struct classes now recommended to return `Struct` type hint
+
+### Technical Details
+- 119 tests passing with 399 assertions
+- All existing tests updated to work with new Struct object API
+- Full backward compatibility maintained through ArrayAccess interface
+
 ## 0.1.0 - 2024-10-17 (Initial Pre-release)
 
 ### Added
