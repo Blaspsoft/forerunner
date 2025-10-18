@@ -4,6 +4,20 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.2.1 - 2025-01-18
+
+### Fixed
+
+- **OpenAI strict mode format**: Description now correctly appears at top level alongside `name` and `strict`, not nested inside `schema` object
+  - Ensures proper OpenAI Structured Outputs API compatibility
+  - Updated `Struct::toArray()` to extract and relocate description when in strict mode
+
+### Technical Details
+
+- 118 tests passing with 404 assertions
+- PHPStan Level 9 compliance maintained
+- All CI checks passing
+
 ## 0.2.0 - 2025-01-18
 
 ### Breaking Changes
