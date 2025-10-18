@@ -13,6 +13,12 @@ class Struct implements \JsonSerializable
     /** @var array<string, mixed>|null */
     protected ?array $cache = null;
 
+    /**
+     * Initialize the struct with its identifier and property builder.
+     *
+     * @param string $name The struct's name used when emitting the schema.
+     * @param Property $builder The Property builder responsible for producing this struct's schema.
+     */
     protected function __construct(string $name, Property $builder)
     {
         $this->name = $name;
@@ -20,7 +26,12 @@ class Struct implements \JsonSerializable
     }
 
     /**
-     * Define a new structure schema.
+     * Create a Struct by configuring a Property builder and returning the resulting schema.
+     *
+     * @param string $name The name of the structure.
+     * @param string $description A human-readable description for the structure.
+     * @param callable $callback A callable that receives the Property builder (`function(Property $builder): void`) used to configure the structure.
+     * @return self A new Struct instance representing the defined schema.
      */
     public static function define(string $name, string $description, callable $callback): self
     {
@@ -33,10 +44,13 @@ class Struct implements \JsonSerializable
     }
 
     /**
-     * Convert the schema to an array.
-     * If strict mode is enabled, wraps the schema in OpenAI's format.
+     * Converts the struct to an associative array representation.
      *
-     * @return array<string, mixed>
+     * When the builder is in strict mode the returned array is in OpenAI-compatible format with keys
+     * 'name' (the struct name), 'strict' set to true, and 'schema' containing the builder's schema.
+     * The result is cached for subsequent calls.
+     *
+     * @return array<string,mixed> The schema array, or the OpenAI-compatible wrapper when strict mode is enabled.
      */
     public function toArray(): array
     {
@@ -59,9 +73,9 @@ class Struct implements \JsonSerializable
     }
 
     /**
-     * Specify data which should be serialized to JSON.
+     * Provide this struct's array representation for JSON serialization.
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed> The struct schema as an associative array suitable for json_encode().
      */
     public function jsonSerialize(): array
     {
