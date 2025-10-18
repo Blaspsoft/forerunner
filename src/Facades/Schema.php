@@ -7,7 +7,7 @@ namespace Blaspsoft\Forerunner\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static array<string, mixed> define(string $name, callable $callback)
+ * @method static \Blaspsoft\Forerunner\Schema\Struct define(string $name, string $description, callable $callback)
  *
  * @see \Blaspsoft\Forerunner\Schema\Struct
  */

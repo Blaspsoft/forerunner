@@ -307,6 +307,8 @@ The `strict()` method is particularly useful for LLM APIs like **OpenAI Structur
 1. `additionalProperties: false`
 2. All properties in the `required` array
 
+**Important:** Call `strict()` after defining all your fields to ensure all of them are marked as required.
+
 ```php
 // Perfect for OpenAI Structured Outputs
 $schema = Struct::define('User', 'A user schema', function (Property $property) {
@@ -315,6 +317,7 @@ $schema = Struct::define('User', 'A user schema', function (Property $property) 
     $property->int('age')->min(0)->max(120);
     $property->string('location');
 
+    // Call strict() at the end to mark all fields as required
     $property->strict(); // Makes all fields required + disallows extra properties
 })->toArray();
 ```
@@ -329,7 +332,7 @@ This generates:
 }
 ```
 
-> **Note**: By default, `additionalProperties` is already set to `false`. Use `strict()` when you also need all fields to be required (like for OpenAI).
+> **Note**: By default, `additionalProperties` is already set to `false`. Use `strict()` when you also need all fields to be required (like for OpenAI). Call it after defining fields to ensure all are marked as required.
 
 ### Schema Metadata
 
@@ -361,7 +364,6 @@ $schema = Struct::define('AdvancedUser', 'Comprehensive user data structure', fu
     // Schema metadata
     $property->schemaVersion();
     $property->title('Advanced User Schema');
-    $property->strict(); // Disallow additional properties
 
     // Helper methods
     $property->uuid('id')->required();
@@ -390,6 +392,9 @@ $schema = Struct::define('AdvancedUser', 'Comprehensive user data structure', fu
         ->maxLength(30)
         ->pattern('^[a-zA-Z0-9_]+$')
         ->required();
+
+    // Call strict() after all fields to mark them all as required
+    $property->strict(); // Disallow extras + mark all defined fields as required
 })->toArray();
 ```
 

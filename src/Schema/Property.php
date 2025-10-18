@@ -11,9 +11,6 @@ class Property
     /** @var array<string, PropertyBuilder> */
     protected array $properties = [];
 
-    /** @var array<int, string> */
-    protected array $required = [];
-
     protected ?string $description = null;
 
     protected bool $additionalProperties = false;
@@ -274,16 +271,6 @@ class Property
         $this->properties[$name] = $builder;
 
         return $builder;
-    }
-
-    /**
-     * Mark a field as required.
-     */
-    public function markRequired(string $name): void
-    {
-        if (! in_array($name, $this->required)) {
-            $this->required[] = $name;
-        }
     }
 
     /**

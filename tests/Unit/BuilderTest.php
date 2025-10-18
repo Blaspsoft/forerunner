@@ -212,13 +212,13 @@ describe('Builder', function () {
         $property = new Property('TestSchema');
         $property->string('name')->required();
 
-        // Manually mark as required again
-        $property->markRequired('name');
-        $property->markRequired('name');
+        // Calling toArray() multiple times should not duplicate required fields
+        $schema1 = $property->toArray();
+        $schema2 = $property->toArray();
 
-        $schema = $property->toArray();
-
-        expect($schema['required'])->toHaveCount(1)
-            ->and($schema['required'])->toContain('name');
+        expect($schema1['required'])->toHaveCount(1)
+            ->and($schema1['required'])->toContain('name')
+            ->and($schema2['required'])->toHaveCount(1)
+            ->and($schema2['required'])->toContain('name');
     });
 });
