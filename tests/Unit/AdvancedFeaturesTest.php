@@ -370,6 +370,7 @@ describe('Advanced Features', function () {
 
             // Check OpenAI format wrapper
             expect($schema)->toHaveKey('name', 'CompleteExample')
+                ->and($schema)->toHaveKey('description', 'A comprehensive schema demonstrating all features')
                 ->and($schema)->toHaveKey('strict', true)
                 ->and($schema)->toHaveKey('schema');
 
@@ -377,7 +378,7 @@ describe('Advanced Features', function () {
             $nestedSchema = $schema['schema'];
             expect($nestedSchema)->toHaveKey('$schema')
                 ->and($nestedSchema)->toHaveKey('title', 'Complete Schema Example')
-                ->and($nestedSchema)->toHaveKey('description')
+                ->and($nestedSchema)->not->toHaveKey('description')
                 ->and($nestedSchema)->toHaveKey('additionalProperties', false)
                 ->and($nestedSchema['properties']['id']['format'])->toBe('uuid')
                 ->and($nestedSchema['properties']['email']['format'])->toBe('email')

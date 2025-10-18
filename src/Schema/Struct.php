@@ -59,8 +59,13 @@ class Struct implements \JsonSerializable
 
             // If strict mode is enabled, wrap in OpenAI's format
             if ($this->builder->isStrict()) {
+                // Extract description from schema and move to top level
+                $description = $builderArray['description'] ?? null;
+                unset($builderArray['description']);
+
                 $this->cache = [
                     'name' => $this->name,
+                    'description' => $description,
                     'strict' => true,
                     'schema' => $builderArray,
                 ];
