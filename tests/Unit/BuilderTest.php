@@ -1,81 +1,82 @@
 <?php
 
-use Blaspsoft\Forerunner\Schemas\Builder;
-use Blaspsoft\Forerunner\Schemas\PropertyBuilder;
+declare(strict_types=1);
+use Blaspsoft\Forerunner\Schema\Property;
+use Blaspsoft\Forerunner\Schema\PropertyBuilder;
 
 describe('Builder', function () {
     it('can be instantiated with a name', function () {
-        $builder = new Builder('TestSchema');
+        $property = new Property('TestSchema');
 
-        expect($builder)->toBeInstanceOf(Builder::class);
+        expect($property)->toBeInstanceOf(Property::class);
     });
 
     it('can add a string property', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->string('username');
+        $property = new Property('TestSchema');
+        $property = $property->string('username');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add an integer property', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->int('age');
+        $property = new Property('TestSchema');
+        $property = $property->int('age');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add an integer property using integer alias', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->integer('count');
+        $property = new Property('TestSchema');
+        $property = $property->integer('count');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add a float property', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->float('price');
+        $property = new Property('TestSchema');
+        $property = $property->float('price');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add a number property using number alias', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->number('amount');
+        $property = new Property('TestSchema');
+        $property = $property->number('amount');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add a boolean property', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->boolean('isActive');
+        $property = new Property('TestSchema');
+        $property = $property->boolean('isActive');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add a boolean property using bool alias', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->bool('enabled');
+        $property = new Property('TestSchema');
+        $property = $property->bool('enabled');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add an array property', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->array('tags');
+        $property = new Property('TestSchema');
+        $property = $property->array('tags');
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add an enum property', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->enum('status', ['active', 'inactive', 'pending']);
+        $property = new Property('TestSchema');
+        $property = $property->enum('status', ['active', 'inactive', 'pending']);
 
         expect($property)->toBeInstanceOf(PropertyBuilder::class);
     });
 
     it('can add a nested object property', function () {
-        $builder = new Builder('TestSchema');
-        $property = $builder->object('user', function (Builder $nested) {
+        $property = new Property('TestSchema');
+        $property = $property->object('user', function (Property $nested) {
             $nested->string('name');
             $nested->string('email');
         });
@@ -84,18 +85,18 @@ describe('Builder', function () {
     });
 
     it('can set a description on the schema', function () {
-        $builder = new Builder('TestSchema');
-        $result = $builder->description('Test schema description');
+        $property = new Property('TestSchema');
+        $result = $property->description('Test schema description');
 
-        expect($result)->toBe($builder);
+        expect($result)->toBe($property);
     });
 
     it('generates correct JSON schema array for simple properties', function () {
-        $builder = new Builder('TestSchema');
-        $builder->string('name');
-        $builder->int('age');
+        $property = new Property('TestSchema');
+        $property->string('name');
+        $property->int('age');
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema)->toHaveKey('type', 'object')
             ->and($schema)->toHaveKey('properties')
@@ -106,22 +107,22 @@ describe('Builder', function () {
     });
 
     it('includes description in schema when set', function () {
-        $builder = new Builder('TestSchema');
-        $builder->description('User schema');
-        $builder->string('name');
+        $property = new Property('TestSchema');
+        $property->description('User schema');
+        $property->string('name');
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema)->toHaveKey('description', 'User schema');
     });
 
     it('includes required fields in schema', function () {
-        $builder = new Builder('TestSchema');
-        $builder->string('name')->required();
-        $builder->string('email')->required();
-        $builder->int('age');
+        $property = new Property('TestSchema');
+        $property->string('name')->required();
+        $property->string('email')->required();
+        $property->int('age');
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema)->toHaveKey('required')
             ->and($schema['required'])->toContain('name')
@@ -130,23 +131,23 @@ describe('Builder', function () {
     });
 
     it('does not include required key when no fields are required', function () {
-        $builder = new Builder('TestSchema');
-        $builder->string('name');
-        $builder->int('age');
+        $property = new Property('TestSchema');
+        $property->string('name');
+        $property->int('age');
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema)->not->toHaveKey('required');
     });
 
     it('generates correct schema for nested objects', function () {
-        $builder = new Builder('TestSchema');
-        $builder->object('user', function (Builder $nested) {
+        $property = new Property('TestSchema');
+        $property->object('user', function (Property $nested) {
             $nested->string('name');
             $nested->string('email');
         });
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema['properties']['user']['type'])->toBe('object')
             ->and($schema['properties']['user']['properties'])->toHaveKey('name')
@@ -154,20 +155,20 @@ describe('Builder', function () {
     });
 
     it('generates correct schema for enum fields', function () {
-        $builder = new Builder('TestSchema');
-        $builder->enum('status', ['active', 'inactive']);
+        $property = new Property('TestSchema');
+        $property->enum('status', ['active', 'inactive']);
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema['properties']['status']['type'])->toBe('string')
             ->and($schema['properties']['status']['enum'])->toBe(['active', 'inactive']);
     });
 
     it('can convert schema to JSON string', function () {
-        $builder = new Builder('TestSchema');
-        $builder->string('name')->required();
+        $property = new Property('TestSchema');
+        $property->string('name')->required();
 
-        $json = $builder->toJson();
+        $json = $property->toJson();
 
         expect($json)->toBeString()
             ->and($json)->toContain('"type": "object"')
@@ -176,13 +177,13 @@ describe('Builder', function () {
     });
 
     it('supports method chaining for properties', function () {
-        $builder = new Builder('TestSchema');
-        $builder->string('username')
+        $property = new Property('TestSchema');
+        $property->string('username')
             ->required()
             ->minLength(3)
             ->maxLength(50);
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema['properties']['username'])->toHaveKey('minLength', 3)
             ->and($schema['properties']['username'])->toHaveKey('maxLength', 50)
@@ -190,14 +191,14 @@ describe('Builder', function () {
     });
 
     it('can handle multiple properties with mixed types', function () {
-        $builder = new Builder('TestSchema');
-        $builder->string('name')->required();
-        $builder->int('age')->min(0)->max(150);
-        $builder->boolean('isActive')->default(true);
-        $builder->array('tags');
-        $builder->enum('role', ['admin', 'user', 'guest']);
+        $property = new Property('TestSchema');
+        $property->string('name')->required();
+        $property->int('age')->min(0)->max(150);
+        $property->boolean('isActive')->default(true);
+        $property->array('tags');
+        $property->enum('role', ['admin', 'user', 'guest']);
 
-        $schema = $builder->toArray();
+        $schema = $property->toArray();
 
         expect($schema['properties'])->toHaveCount(5)
             ->and($schema['properties']['name']['type'])->toBe('string')
@@ -208,16 +209,16 @@ describe('Builder', function () {
     });
 
     it('avoids duplicate required fields', function () {
-        $builder = new Builder('TestSchema');
-        $builder->string('name')->required();
+        $property = new Property('TestSchema');
+        $property->string('name')->required();
 
-        // Manually mark as required again
-        $builder->markRequired('name');
-        $builder->markRequired('name');
+        // Calling toArray() multiple times should not duplicate required fields
+        $schema1 = $property->toArray();
+        $schema2 = $property->toArray();
 
-        $schema = $builder->toArray();
-
-        expect($schema['required'])->toHaveCount(1)
-            ->and($schema['required'])->toContain('name');
+        expect($schema1['required'])->toHaveCount(1)
+            ->and($schema1['required'])->toContain('name')
+            ->and($schema2['required'])->toHaveCount(1)
+            ->and($schema2['required'])->toContain('name');
     });
 });

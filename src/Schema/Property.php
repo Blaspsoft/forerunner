@@ -1,16 +1,15 @@
 <?php
 
-namespace Blaspsoft\Forerunner\Schemas;
+declare(strict_types=1);
 
-class Builder
+namespace Blaspsoft\Forerunner\Schema;
+
+class Property
 {
     protected string $name;
 
     /** @var array<string, PropertyBuilder> */
     protected array $properties = [];
-
-    /** @var array<int, string> */
-    protected array $required = [];
 
     protected ?string $description = null;
 
@@ -19,6 +18,8 @@ class Builder
     protected ?string $schemaVersion = null;
 
     protected ?string $title = null;
+
+    protected bool $isStrict = false;
 
     public function __construct(string $name)
     {
@@ -94,7 +95,7 @@ class Builder
      */
     public function object(string $name, callable $callback, ?string $description = null): PropertyBuilder
     {
-        $nestedBuilder = new Builder($name);
+        $nestedBuilder = new Property($name);
         $callback($nestedBuilder);
 
         $builder = new PropertyBuilder($name, 'object', $description);
@@ -226,6 +227,7 @@ class Builder
      */
     public function strict(): self
     {
+        $this->isStrict = true;
         $this->additionalProperties = false;
 
         // Mark all properties as required
@@ -234,6 +236,14 @@ class Builder
         }
 
         return $this;
+    }
+
+    /**
+     * Check if strict mode is enabled.
+     */
+    public function isStrict(): bool
+    {
+        return $this->isStrict;
     }
 
     /**
@@ -252,19 +262,15 @@ class Builder
     protected function addProperty(string $name, string $type, ?string $description): PropertyBuilder
     {
         $builder = new PropertyBuilder($name, $type, $description);
+
+        // In strict mode, all fields must be required, including those added after strict()
+        if ($this->isStrict) {
+            $builder->required();
+        }
+
         $this->properties[$name] = $builder;
 
         return $builder;
-    }
-
-    /**
-     * Mark a field as required.
-     */
-    public function markRequired(string $name): void
-    {
-        if (! in_array($name, $this->required)) {
-            $this->required[] = $name;
-        }
     }
 
     /**
@@ -291,16 +297,18 @@ class Builder
             $schema['description'] = $this->description;
         }
 
+        // Build required array from property states without mutating $this->required
+        $required = [];
         foreach ($this->properties as $name => $builder) {
             $schema['properties'][$name] = $builder->toArray();
 
             if ($builder->isRequired()) {
-                $this->markRequired($name);
+                $required[] = $name;
             }
         }
 
-        if (! empty($this->required)) {
-            $schema['required'] = $this->required;
+        if (! empty($required)) {
+            $schema['required'] = $required;
         }
 
         $schema['additionalProperties'] = $this->additionalProperties;

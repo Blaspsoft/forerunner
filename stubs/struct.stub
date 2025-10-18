@@ -2,43 +2,23 @@
 
 namespace {{ namespace }};
 
-use Blaspsoft\Forerunner\Schemas\Struct;
-use Blaspsoft\Forerunner\Schemas\Builder;
+use Blaspsoft\Forerunner\Schema\Struct;
+use Blaspsoft\Forerunner\Schema\Property;
 
 class {{ class }}
 {
     /**
      * Define the structure schema.
      *
-     * @return Struct
-     */
-    public static function schema(): Struct
-    {
-        return Struct::define('{{ structName }}', function (Builder $builder) {
-            $builder->string('example_field');
-            // Add your fields here
-
-            $builder->strict(); // All fields required + no additional properties
-        });
-    }
-
-    /**
-     * Get the schema as a PHP array.
-     *
      * @return array<string, mixed>
      */
-    public static function toArray(): array
+    public static function schema(): array
     {
-        return static::schema()->toArray();
-    }
+        return Struct::define('{{ structName }}', 'Description of {{ structName }}', function (Property $property) {
+            $property->string('example_field');
+            // Add your fields here
 
-    /**
-     * Get the schema as JSON string.
-     *
-     * @return string
-     */
-    public static function toJson(): string
-    {
-        return static::schema()->toJson();
+            $property->strict(); // All fields required + no additional properties
+        })->toArray();
     }
 }

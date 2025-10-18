@@ -1,6 +1,8 @@
 <?php
 
-namespace Blaspsoft\Forerunner\Schemas;
+declare(strict_types=1);
+
+namespace Blaspsoft\Forerunner\Schema;
 
 class PropertyBuilder
 {
@@ -15,7 +17,7 @@ class PropertyBuilder
     /** @var array<int, mixed>|null */
     protected ?array $enum = null;
 
-    protected ?Builder $nestedBuilder = null;
+    protected ?Property $nestedBuilder = null;
 
     /** @var array<string, mixed>|null */
     protected ?array $items = null;
@@ -99,7 +101,7 @@ class PropertyBuilder
     public function items(string $type, ?callable $callback = null): self
     {
         if ($callback && $type === 'object') {
-            $nestedBuilder = new Builder($this->name.'_item');
+            $nestedBuilder = new Property($this->name.'_item');
             $callback($nestedBuilder);
             $this->items = $nestedBuilder->toArray();
         } else {
@@ -232,7 +234,7 @@ class PropertyBuilder
     /**
      * Set a nested builder for object types.
      */
-    public function setNestedBuilder(Builder $builder): void
+    public function setNestedBuilder(Property $builder): void
     {
         $this->nestedBuilder = $builder;
     }

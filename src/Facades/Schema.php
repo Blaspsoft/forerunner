@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Blaspsoft\Forerunner\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static array<string, mixed> define(string $name, callable $callback)
+ * @method static \Blaspsoft\Forerunner\Schema\Struct define(string $name, string $description, callable $callback)
  *
- * @see \Blaspsoft\Forerunner\Schemas\Struct
+ * @see \Blaspsoft\Forerunner\Schema\Struct
  */
 class Schema extends Facade
 {
