@@ -11,7 +11,10 @@ use Illuminate\Support\ServiceProvider;
 class ForerunnerServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Register the Forerunner schema service in the application container.
+     *
+     * Binds a singleton under the container key "forerunner.schema" that resolves to an object
+     * which forwards dynamic instance and static calls to the `Struct` class's static methods.
      */
     public function register(): void
     {
@@ -38,7 +41,9 @@ class ForerunnerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Register console commands when the application is running in a console.
+     *
+     * Registers the MakeStructCommand so it becomes available to the application's CLI when executed in a console environment.
      */
     public function boot(): void
     {

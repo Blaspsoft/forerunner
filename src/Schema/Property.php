@@ -24,6 +24,11 @@ class Property
 
     protected bool $isStrict = false;
 
+    /**
+     * Initialize the Property with the given schema node name.
+     *
+     * @param string $name The property name for this schema node.
+     */
     public function __construct(string $name)
     {
         $this->name = $name;
@@ -94,7 +99,12 @@ class Property
     }
 
     /**
-     * Add a nested object field.
+     * Create and register a nested object property and return its builder.
+     *
+     * @param string $name The property name to create on this object.
+     * @param callable $callback A callback invoked with the newly created nested Property to configure its schema.
+     * @param string|null $description Optional description for the nested property.
+     * @return PropertyBuilder The builder for the created nested object property.
      */
     public function object(string $name, callable $callback, ?string $description = null): PropertyBuilder
     {
@@ -225,8 +235,9 @@ class Property
     }
 
     /**
-     * Enable strict mode: disallow additional properties and mark all fields as required.
-     * This is useful for LLM APIs like OpenAI that require all properties to be required.
+     * Enables strict mode for the schema: disallows additional properties and marks all defined properties as required.
+     *
+     * @return self The current Property instance.
      */
     public function strict(): self
     {
@@ -242,7 +253,9 @@ class Property
     }
 
     /**
-     * Check if strict mode is enabled.
+     * Determine whether strict mode is enabled for this schema.
+     *
+     * @return bool `true` if strict mode is enabled, `false` otherwise.
      */
     public function isStrict(): bool
     {
