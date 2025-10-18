@@ -7,6 +7,7 @@
     <a href="https://packagist.org/packages/blaspsoft/forerunner"><img src="https://img.shields.io/packagist/dt/blaspsoft/forerunner.svg?style=flat-square" alt="Total Downloads"></a>
     <a href="https://packagist.org/packages/blaspsoft/forerunner"><img src="https://img.shields.io/packagist/v/blaspsoft/forerunner.svg?style=flat-square" alt="Latest Version on Packagist"></a>
     <a href="https://packagist.org/packages/blaspsoft/forerunner"><img src="https://img.shields.io/packagist/l/blaspsoft/forerunner.svg?style=flat-square" alt="License"></a>
+    <a href="https://coderabbit.ai"><img src="https://img.shields.io/coderabbit/prs/github/Blaspsoft/forerunner?utm_source=oss&utm_medium=github&utm_campaign=Blaspsoft%2Fforerunner&labelColor=171717&color=FF570A&label=CodeRabbit+Reviews" alt="CodeRabbit Pull Request Reviews"></a>
 </p>
 
 # Forerunner - Build structured LLM outputs the Laravel way
