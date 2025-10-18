@@ -265,6 +265,12 @@ class Property
     protected function addProperty(string $name, string $type, ?string $description): PropertyBuilder
     {
         $builder = new PropertyBuilder($name, $type, $description);
+
+        // In strict mode, all fields must be required, including those added after strict()
+        if ($this->isStrict) {
+            $builder->required();
+        }
+
         $this->properties[$name] = $builder;
 
         return $builder;
@@ -304,16 +310,18 @@ class Property
             $schema['description'] = $this->description;
         }
 
+        // Build required array from property states without mutating $this->required
+        $required = [];
         foreach ($this->properties as $name => $builder) {
             $schema['properties'][$name] = $builder->toArray();
 
             if ($builder->isRequired()) {
-                $this->markRequired($name);
+                $required[] = $name;
             }
         }
 
-        if (! empty($this->required)) {
-            $schema['required'] = $this->required;
+        if (! empty($required)) {
+            $schema['required'] = $required;
         }
 
         $schema['additionalProperties'] = $this->additionalProperties;
