@@ -4,6 +4,73 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.2.0 - 2025-01-18
+
+### Breaking Changes
+
+- **Renamed `Builder` class to `Property`** for better API semantics
+  - `Blaspsoft\Forerunner\Schemas\Builder` → `Blaspsoft\Forerunner\Schema\Property`
+  - Better reflects the class's purpose of building properties within a schema
+- **Renamed namespace from `Schemas` to `Schema`** for cleaner imports
+  - `Blaspsoft\Forerunner\Schemas\*` → `Blaspsoft\Forerunner\Schema\*`
+- **Made `description` parameter required** in `Struct::define()`
+  - Old: `Struct::define($name, $callback)`
+  - New: `Struct::define($name, $description, $callback)`
+  - Aligns with LLM provider requirements (Anthropic Claude requires description)
+- **Removed `toJson()` method** from `Struct` class
+  - Use `json_encode($struct)` instead (implements `JsonSerializable`)
+- **Removed config file** (`config/forerunner.php`)
+  - Package now uses sensible defaults
+  - Simplifies setup and reduces configuration overhead
+
+### Added
+
+- **OpenAI Structured Outputs format support**
+  - `strict()` mode now wraps schema in `{name, strict: true, schema: {...}}` format
+  - Perfect for OpenAI's Structured Outputs API
+- **Inline property descriptions**
+  - Properties can now have descriptions as second parameter
+  - Example: `$property->string('name', 'The user\'s full name')`
+- **Cached schema generation** in `Struct::toArray()`
+  - Improves performance by caching the generated schema array
+- **Strict type declarations** (`declare(strict_types=1)`) added to all PHP files
+
+### Changed
+
+- **Updated callback parameter** from `$builder` to `$property` throughout codebase
+  - More intuitive and consistent with the renamed class
+- **Improved `strict()` behavior**
+  - Now automatically marks fields added *after* `strict()` is called as required
+  - `toArray()` made non-mutating to prevent side effects
+- **Parameter order updated** for better ergonomics
+  - Description moved to second parameter in `Struct::define()`
+
+### Removed
+
+- Removed dead code: `$this->required` property and `markRequired()` method from `Property` class
+  - Required fields now derived directly from `PropertyBuilder::isRequired()` states
+
+### Fixed
+
+- PHPStan configuration no longer references deleted config directory
+- Laravel Pint formatting issues resolved
+- README examples updated to call `strict()` after defining all fields (best practice)
+- Facade PHPDoc updated to include required description parameter
+
+### Documentation
+
+- Comprehensive README updates with all new API patterns
+- Added guidance on calling `strict()` after field definitions
+- Fixed examples to use new `Property` class and variable naming
+- Added CodeRabbit badge for automated code review integration
+
+### Technical Details
+
+- 118 tests passing with 402 assertions
+- PHPStan Level 9 compliance maintained
+- All CI checks passing (tests, PHPStan, Laravel Pint)
+- Full backward compatibility for PHP 8.2+, Laravel 11 & 12
+
 ## 0.1.4 - 2024-10-17
 
 ### Changed
