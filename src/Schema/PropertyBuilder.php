@@ -98,8 +98,8 @@ class PropertyBuilder
     /**
      * Configure the schema for array items.
      *
-     * @param string $type The JSON Schema type for items. When set to `'object'`, the optional callback will be used to configure the object item schema.
-     * @param callable|null $callback Optional function that receives a Property builder to configure an object-type item schema.
+     * @param  string  $type  The JSON Schema type for items. When set to `'object'`, the optional callback will be used to configure the object item schema.
+     * @param  callable|null  $callback  Optional function that receives a Property builder to configure an object-type item schema.
      * @return $this The current PropertyBuilder instance.
      */
     public function items(string $type, ?callable $callback = null): self
@@ -238,8 +238,7 @@ class PropertyBuilder
     /**
      * Assigns a nested Property builder to define the schema for an object-type property.
      *
-     * @param Property $builder The nested property builder whose schema will be merged into this property's definition.
-     * @return void
+     * @param  Property  $builder  The nested property builder whose schema will be merged into this property's definition.
      */
     public function setNestedBuilder(Property $builder): void
     {

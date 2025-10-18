@@ -16,8 +16,8 @@ class Struct implements \JsonSerializable
     /**
      * Initialize the struct with its identifier and property builder.
      *
-     * @param string $name The struct's name used when emitting the schema.
-     * @param Property $builder The Property builder responsible for producing this struct's schema.
+     * @param  string  $name  The struct's name used when emitting the schema.
+     * @param  Property  $builder  The Property builder responsible for producing this struct's schema.
      */
     protected function __construct(string $name, Property $builder)
     {
@@ -28,9 +28,9 @@ class Struct implements \JsonSerializable
     /**
      * Create a Struct by configuring a Property builder and returning the resulting schema.
      *
-     * @param string $name The name of the structure.
-     * @param string $description A human-readable description for the structure.
-     * @param callable $callback A callable that receives the Property builder (`function(Property $builder): void`) used to configure the structure.
+     * @param  string  $name  The name of the structure.
+     * @param  string  $description  A human-readable description for the structure.
+     * @param  callable  $callback  A callable that receives the Property builder (`function(Property $builder): void`) used to configure the structure.
      * @return self A new Struct instance representing the defined schema.
      */
     public static function define(string $name, string $description, callable $callback): self

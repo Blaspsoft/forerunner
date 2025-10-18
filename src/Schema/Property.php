@@ -24,7 +24,7 @@ class Property
     /**
      * Initialize the Property with the given schema node name.
      *
-     * @param string $name The property name for this schema node.
+     * @param  string  $name  The property name for this schema node.
      */
     public function __construct(string $name)
     {
@@ -98,9 +98,9 @@ class Property
     /**
      * Create and register a nested object property and return its builder.
      *
-     * @param string $name The property name to create on this object.
-     * @param callable $callback A callback invoked with the newly created nested Property to configure its schema.
-     * @param string|null $description Optional description for the nested property.
+     * @param  string  $name  The property name to create on this object.
+     * @param  callable  $callback  A callback invoked with the newly created nested Property to configure its schema.
+     * @param  string|null  $description  Optional description for the nested property.
      * @return PropertyBuilder The builder for the created nested object property.
      */
     public function object(string $name, callable $callback, ?string $description = null): PropertyBuilder
