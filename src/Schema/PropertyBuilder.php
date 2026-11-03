@@ -22,6 +22,8 @@ class PropertyBuilder
     /** @var array<string, mixed>|null */
     protected ?array $items = null;
 
+    protected ?Property $itemsBuilder = null;
+
     protected mixed $default = null;
 
     protected ?int $minLength = null;
@@ -32,9 +34,9 @@ class PropertyBuilder
 
     protected ?int $maxItems = null;
 
-    protected ?float $minimum = null;
+    protected int|float|null $minimum = null;
 
-    protected ?float $maximum = null;
+    protected int|float|null $maximum = null;
 
     protected ?string $pattern = null;
 
@@ -105,10 +107,11 @@ class PropertyBuilder
     public function items(string $type, ?callable $callback = null): self
     {
         if ($callback && $type === 'object') {
-            $nestedBuilder = new Property($this->name.'_item');
-            $callback($nestedBuilder);
-            $this->items = $nestedBuilder->toArray();
+            $this->itemsBuilder = new Property($this->name.'_item');
+            $callback($this->itemsBuilder);
+            $this->items = null;
         } else {
+            $this->itemsBuilder = null;
             $this->items = ['type' => $type];
         }
 
@@ -168,7 +171,7 @@ class PropertyBuilder
     /**
      * Set minimum value for numeric fields.
      */
-    public function min(float $value): self
+    public function min(int|float $value): self
     {
         $this->minimum = $value;
 
@@ -178,7 +181,7 @@ class PropertyBuilder
     /**
      * Set maximum value for numeric fields.
      */
-    public function max(float $value): self
+    public function max(int|float $value): self
     {
         $this->maximum = $value;
 
@@ -264,9 +267,10 @@ class PropertyBuilder
     /**
      * Convert the property to a JSON schema array.
      *
+     * @param  bool  $strict  Whether the parent schema is strict, which makes nested objects strict too.
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    public function toArray(bool $strict = false): array
     {
         // Handle nullable types
         if ($this->nullable) {
@@ -292,18 +296,24 @@ class PropertyBuilder
         }
 
         if ($this->nestedBuilder !== null) {
-            $nestedArray = $this->nestedBuilder->toArray();
-            // When nullable is set on an object, keep the nullable type but merge nested properties
-            if ($this->nullable) {
-                // Preserve the nullable type array, merge everything except 'type'
-                unset($nestedArray['type']);
-                $property = array_merge($property, $nestedArray);
-            } else {
-                $property = array_merge($property, $nestedArray);
+            $nestedArray = $this->nestedBuilder->toArray($strict);
+            // Keep this field's own type (which may be nullable) and merge in the nested schema
+            unset($nestedArray['type']);
+            $property = array_merge($property, $nestedArray);
+
+            // A title or description set on the field itself takes precedence over the nested schema's
+            if ($this->title) {
+                $property['title'] = $this->title;
+            }
+
+            if ($this->description) {
+                $property['description'] = $this->description;
             }
         }
 
-        if ($this->items !== null) {
+        if ($this->itemsBuilder !== null) {
+            $property['items'] = $this->itemsBuilder->toArray($strict);
+        } elseif ($this->items !== null) {
             $property['items'] = $this->items;
         }
 
