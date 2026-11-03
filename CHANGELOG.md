@@ -4,6 +4,10 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- `default(null)` now sets `null` as the default. Before, it was ignored, because `null` was also how the package meant "no default".
+
 ## 0.4.0 - 2026-11-03
 
 ### Added

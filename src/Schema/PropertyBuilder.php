@@ -26,6 +26,8 @@ class PropertyBuilder
 
     protected mixed $default = null;
 
+    protected bool $hasDefault = false;
+
     protected ?int $minLength = null;
 
     protected ?int $maxLength = null;
@@ -124,6 +126,7 @@ class PropertyBuilder
     public function default(mixed $value): self
     {
         $this->default = $value;
+        $this->hasDefault = true;
 
         return $this;
     }
@@ -321,7 +324,7 @@ class PropertyBuilder
             $property['uniqueItems'] = $this->uniqueItems;
         }
 
-        if ($this->default !== null) {
+        if ($this->hasDefault) {
             $property['default'] = $this->default;
         }
 
