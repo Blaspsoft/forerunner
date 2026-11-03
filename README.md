@@ -309,6 +309,7 @@ $property->strict(); // Disallows additional properties AND marks all fields as 
 #### Strict Mode for LLM APIs
 
 The `strict()` method is particularly useful for LLM APIs like **OpenAI Structured Outputs** which require:
+
 1. `additionalProperties: false`
 2. All properties in the `required` array
 
@@ -328,6 +329,7 @@ $schema = Struct::define('User', 'A user schema', function (Property $property) 
 ```
 
 This generates:
+
 ```json
 {
     "type": "object",
@@ -347,7 +349,37 @@ Add metadata to your schemas:
 $property->title('User Schema');
 $property->description('Schema for user data validation');
 $property->schemaVersion('https://json-schema.org/draft/2020-12/schema');
+$property->id('https://example.com/schemas/user.json');
 ```
+
+#### Schema Identifier (`$id`)
+
+The `id()` method sets a unique identifier (URI) for your schema, following the JSON Schema specification. This is useful for referencing schemas and establishing canonical identifiers:
+
+```php
+$schema = Struct::define('User', 'A user schema', function (Property $property) {
+    $property->id('https://example.com/schemas/user.json');
+    $property->string('name')->required();
+    $property->int('age');
+})->toArray();
+```
+
+This generates:
+
+```json
+{
+    "$id": "https://example.com/schemas/user.json",
+    "type": "object",
+    "properties": {
+        "name": { "type": "string" },
+        "age": { "type": "integer" }
+    },
+    "required": ["name"],
+    "additionalProperties": false
+}
+```
+
+The `$id` is optional and only included in the output when explicitly set.
 
 You can also add titles to individual fields:
 
@@ -368,6 +400,7 @@ use Blaspsoft\Forerunner\Schema\Property;
 $schema = Struct::define('AdvancedUser', 'Comprehensive user data structure', function (Property $property) {
     // Schema metadata
     $property->schemaVersion();
+    $property->id('https://example.com/schemas/advanced-user.json');
     $property->title('Advanced User Schema');
 
     // Helper methods
@@ -408,6 +441,7 @@ This generates:
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/schemas/advanced-user.json",
     "type": "object",
     "title": "Advanced User Schema",
     "description": "Comprehensive user data structure",
@@ -632,8 +666,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
--   [Blaspsoft](https://github.com/blaspsoft)
--   [All Contributors](../../contributors)
+- [Blaspsoft](https://github.com/blaspsoft)
+- [All Contributors](../../contributors)
 
 ## License
 

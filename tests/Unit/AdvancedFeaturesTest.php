@@ -207,6 +207,54 @@ describe('Advanced Features', function () {
         });
     });
 
+    describe('schema id', function () {
+        it('can set $id on schema', function () {
+            $property = new Property('Test');
+            $property->id('https://example.com/schemas/user.json');
+            $property->string('name');
+
+            $schema = $property->toArray();
+
+            expect($schema)->toHaveKey('$id', 'https://example.com/schemas/user.json');
+            expect($schema['properties'])->toHaveKey('name');
+        });
+
+        it('does not include $id when not set', function () {
+            $property = new Property('Test');
+            $property->string('name');
+
+            $schema = $property->toArray();
+
+            expect($schema)->not->toHaveKey('$id');
+        });
+
+        it('can use $id with Struct::define', function () {
+            $schema = Struct::define('User', 'A user schema', function (Property $property) {
+                $property->id('https://example.com/schemas/user.json');
+                $property->string('name')->required();
+                $property->int('age');
+            })->toArray();
+
+            expect($schema)->toHaveKey('$id', 'https://example.com/schemas/user.json')
+                ->and($schema)->toHaveKey('type', 'object')
+                ->and($schema['properties'])->toHaveKey('name')
+                ->and($schema['properties'])->toHaveKey('age')
+                ->and($schema['required'])->toContain('name');
+        });
+
+        it('can combine $id with $schema version', function () {
+            $property = new Property('Test');
+            $property->schemaVersion();
+            $property->id('https://example.com/schemas/test.json');
+            $property->string('name');
+
+            $schema = $property->toArray();
+
+            expect($schema)->toHaveKey('$schema', 'https://json-schema.org/draft/2020-12/schema')
+                ->and($schema)->toHaveKey('$id', 'https://example.com/schemas/test.json');
+        });
+    });
+
     describe('title', function () {
         it('can set title on schema', function () {
             $property = new Property('Test');

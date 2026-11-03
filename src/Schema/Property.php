@@ -17,6 +17,8 @@ class Property
 
     protected ?string $schemaVersion = null;
 
+    protected ?string $id = null;
+
     protected ?string $title = null;
 
     protected bool $isStrict = false;
@@ -270,6 +272,18 @@ class Property
     }
 
     /**
+     * Set the unique identifier ($id) for the schema.
+     *
+     * @param  string  $id  A URI that serves as the canonical identifier for the schema.
+     */
+    public function id(string $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * Add a property to the schema.
      */
     protected function addProperty(string $name, string $type, ?string $description): PropertyBuilder
@@ -300,6 +314,10 @@ class Property
 
         if ($this->schemaVersion) {
             $schema['$schema'] = $this->schemaVersion;
+        }
+
+        if ($this->id) {
+            $schema['$id'] = $this->id;
         }
 
         if ($this->title) {
