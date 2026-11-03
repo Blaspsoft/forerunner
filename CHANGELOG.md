@@ -4,6 +4,24 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Provider payloads**: `toOpenAI()`, `toOpenAIResponses()`, `toAnthropic()`, `toAnthropicTool()` and `toGemini()` build each provider's structured output format and adjust the schema to its rules. `for(Provider|string)` picks one at runtime.
+- `Struct::toSchema()` returns the plain JSON schema, and `Struct::name()` returns the struct's name.
+
+### Fixed
+
+- **Strict mode now applies to nested objects and array item objects.** Before, only top-level fields were marked required, so OpenAI rejected any strict schema with nesting.
+- **Enum fields get the right type.** `enum('priority', [1, 2, 3])` is now `integer` (it was always `string`), and an enum containing `null` is nullable.
+- **Installing Forerunner no longer replaces Laravel's `Schema` alias.** The package registered a global `Schema` alias, which took over Laravel's database `Schema` facade for any code using the alias without an import.
+- A description passed to `object()` is no longer overwritten by a description set inside the nested callback.
+- `min()` and `max()` keep integers as integers.
+
+### Changed
+
+- **Breaking:** the global `Schema` alias is removed. Import `Blaspsoft\Forerunner\Facades\Schema` (as the README always showed) or use `Struct` directly.
+- `make:struct` now generates a `schema()` method that returns the `Struct`, so callers can pick plain JSON Schema or a provider payload.
+
 ## 0.3.0 - 2026-11-03
 
 ### Added

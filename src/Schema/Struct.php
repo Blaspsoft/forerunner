@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Blaspsoft\Forerunner\Schema;
 
+use Blaspsoft\Forerunner\Providers\AnthropicFormatter;
+use Blaspsoft\Forerunner\Providers\GeminiFormatter;
+use Blaspsoft\Forerunner\Providers\OpenAIFormatter;
+use Blaspsoft\Forerunner\Providers\Provider;
+
 class Struct implements \JsonSerializable
 {
     protected Property $builder;
@@ -75,6 +80,86 @@ class Struct implements \JsonSerializable
         }
 
         return $this->cache;
+    }
+
+    /**
+     * Get the struct's name.
+     */
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the plain JSON schema, without any provider-specific wrapper.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSchema(): array
+    {
+        return $this->builder->toArray();
+    }
+
+    /**
+     * Format the struct as the given provider's structured output payload.
+     *
+     * @return array<string, mixed>
+     */
+    public function for(Provider|string $provider): array
+    {
+        $provider = is_string($provider) ? Provider::from(strtolower($provider)) : $provider;
+
+        return $provider->format($this);
+    }
+
+    /**
+     * Format the struct as an OpenAI Chat Completions `response_format`.
+     *
+     * @return array<string, mixed>
+     */
+    public function toOpenAI(): array
+    {
+        return (new OpenAIFormatter)->format($this);
+    }
+
+    /**
+     * Format the struct as an OpenAI Responses API `text.format`.
+     *
+     * @return array<string, mixed>
+     */
+    public function toOpenAIResponses(): array
+    {
+        return (new OpenAIFormatter)->responses($this);
+    }
+
+    /**
+     * Format the struct as a Claude Messages API `output_config.format`.
+     *
+     * @return array<string, mixed>
+     */
+    public function toAnthropic(): array
+    {
+        return (new AnthropicFormatter)->format($this);
+    }
+
+    /**
+     * Format the struct as a strict Claude tool definition.
+     *
+     * @return array<string, mixed>
+     */
+    public function toAnthropicTool(): array
+    {
+        return (new AnthropicFormatter)->tool($this);
+    }
+
+    /**
+     * Format the struct as Gemini `generationConfig` fields.
+     *
+     * @return array<string, mixed>
+     */
+    public function toGemini(): array
+    {
+        return (new GeminiFormatter)->format($this);
     }
 
     /**

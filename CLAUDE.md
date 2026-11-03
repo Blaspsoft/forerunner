@@ -29,35 +29,42 @@ composer install           # Install dependencies
 
 ### Core Schema Builder Pattern
 
-The package uses a fluent builder pattern with three main classes in `src/Schemas/`:
+The package uses a fluent builder pattern with three main classes in `src/Schema/`:
 
-1. **Struct** - Entry point that provides a static `define()` method to create schemas
-2. **Builder** - The main schema builder that manages properties and generates JSON schema objects
-3. **PropertyBuilder** - Handles individual property definitions with chainable constraint methods
+1. **Struct** - Entry point with a static `define()` method; renders the schema (`toArray()`, `toSchema()`) and provider payloads
+2. **Property** - The schema builder that manages fields and generates JSON schema objects
+3. **PropertyBuilder** - Handles individual field definitions with chainable constraint methods
 
 #### Builder Flow
 ```
-Struct::define() → creates Builder → adds PropertyBuilders → toArray() → JSON schema
+Struct::define() → creates Property → adds PropertyBuilders → toArray() → JSON schema
 ```
 
 #### Key Architectural Decisions
 
-- **Builder stores PropertyBuilder instances**: The `Builder::$properties` array stores `PropertyBuilder` objects (not raw arrays), which are converted to arrays only during `toArray()` serialization
-- **Nested objects use recursive Builders**: The `object()` method creates a nested `Builder` instance and passes it via callback, which is then attached to a `PropertyBuilder` via `setNestedBuilder()`
-- **Array items support callbacks**: The `PropertyBuilder::items()` method can accept a callback for object-type arrays, creating nested schemas
-- **Required fields tracked separately**: Fields marked as `required()` are tracked in both `PropertyBuilder::$required` flag and `Builder::$required` array during serialization
+- **Property stores PropertyBuilder instances**: `Property::$properties` holds `PropertyBuilder` objects, converted to arrays only in `toArray()`
+- **Nested objects use recursive Property instances**: `object()` and `items('object', fn)` keep a nested `Property` that is rendered lazily, so strict mode can reach every level
+- **Strict mode is applied at render time**: `toArray(bool $strict)` passes strictness down to nested schemas; every field is then listed in `required`
+- **Struct::toArray() returns OpenAI's wrapper when strict** (kept for backwards compatibility); `toSchema()` always returns the plain schema
+
+### Providers (`src/Providers/`)
+
+- `Provider` enum (`OpenAI`, `Anthropic`, `Gemini`) maps to a `Formatter`
+- Each formatter takes `Struct::toSchema()` and rewrites it with `SchemaTransformer` helpers (`requireAll`, `closeObjects`, `moveToDescription`, `withoutMetaKeywords`, `name`)
+- Formatters never mutate the struct; they work on the rendered array
 
 ### Type System
 
-The Builder provides methods for JSON Schema types:
+Property provides methods for JSON Schema types:
 - Primitives: `string()`, `int()`/`integer()`, `float()`/`number()`, `boolean()`/`bool()`
-- Complex: `array()`, `object()`, `enum()`
+- Complex: `array()`, `object()`, `enum()` (type inferred from the values)
+- Formats: `email()`, `url()`, `uuid()`, `datetime()`, `date()`, `time()`, `ipv4()`, `ipv6()`, `hostname()`
 
 PropertyBuilder provides constraint methods:
-- String: `minLength()`, `maxLength()`, `pattern()`
+- String: `minLength()`, `maxLength()`, `pattern()`, `format()`
 - Numeric: `min()`, `max()`
-- Array: `minItems()`, `maxItems()`, `items()`
-- General: `required()`, `optional()`, `default()`, `description()`, `enum()`
+- Array: `minItems()`, `maxItems()`, `items()`, `uniqueItems()`
+- General: `required()`, `optional()`, `nullable()`, `default()`, `description()`, `title()`, `enum()`
 
 ## PHPStan Configuration
 

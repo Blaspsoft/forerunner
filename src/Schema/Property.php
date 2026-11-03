@@ -125,8 +125,28 @@ class Property
      */
     public function enum(string $name, array $values, ?string $description = null): PropertyBuilder
     {
-        $builder = $this->addProperty($name, 'string', $description);
+        $types = array_values(array_unique(array_map(fn (mixed $value): string => match (true) {
+            is_int($value) => 'integer',
+            is_float($value) => 'number',
+            is_bool($value) => 'boolean',
+            $value === null => 'null',
+            default => 'string',
+        }, $values)));
+
+        $nullable = in_array('null', $types, true);
+        $types = array_values(array_diff($types, ['null']));
+
+        // Integers are valid numbers, so a mix of the two is a number enum
+        if (count($types) === 2 && ! array_diff($types, ['integer', 'number'])) {
+            $types = ['number'];
+        }
+
+        $builder = $this->addProperty($name, count($types) === 1 ? $types[0] : 'string', $description);
         $builder->enum($values);
+
+        if ($nullable) {
+            $builder->nullable();
+        }
 
         return $builder;
     }
@@ -303,10 +323,13 @@ class Property
     /**
      * Convert the builder to a JSON schema array.
      *
+     * @param  bool  $strict  Render as strict even if strict() was not called, e.g. when a parent schema is strict.
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    public function toArray(bool $strict = false): array
     {
+        $strict = $strict || $this->isStrict;
+
         $schema = [
             'type' => 'object',
             'properties' => [],
@@ -331,9 +354,9 @@ class Property
         // Build required array from property states without mutating $this->required
         $required = [];
         foreach ($this->properties as $name => $builder) {
-            $schema['properties'][$name] = $builder->toArray();
+            $schema['properties'][$name] = $builder->toArray($strict);
 
-            if ($builder->isRequired()) {
+            if ($strict || $builder->isRequired()) {
                 $required[] = $name;
             }
         }

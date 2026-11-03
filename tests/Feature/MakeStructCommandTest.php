@@ -59,9 +59,9 @@ it('generates struct with schema method', function () {
 
     $content = File::get($this->testFilePath);
 
-    expect($content)->toContain('public static function schema(): array')
+    expect($content)->toContain('public static function schema(): Struct')
         ->and($content)->toContain("Struct::define('test_user_struct'")
-        ->and($content)->toContain('->toArray()');
+        ->and($content)->not->toContain('->toArray()');
 });
 
 it('generates struct with strict mode by default', function () {

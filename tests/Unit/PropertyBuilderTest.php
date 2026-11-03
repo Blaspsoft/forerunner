@@ -278,8 +278,8 @@ describe('PropertyBuilder', function () {
         $schema = $property->toArray();
 
         expect($schema['type'])->toBe('number')
-            ->and($schema['minimum'])->toBe(0.0)
-            ->and($schema['maximum'])->toBe(100.0)
+            ->and($schema['minimum'])->toBe(0)
+            ->and($schema['maximum'])->toBe(100)
             ->and($schema['default'])->toBe(50)
             ->and($schema['description'])->toBe('Test score');
     });

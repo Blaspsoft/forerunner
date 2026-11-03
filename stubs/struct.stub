@@ -10,15 +10,15 @@ class {{ class }}
     /**
      * Define the structure schema.
      *
-     * @return array<string, mixed>
+     * Call ->toSchema() for plain JSON Schema, or ->toOpenAI(), ->toAnthropic() or ->toGemini() for a provider payload.
      */
-    public static function schema(): array
+    public static function schema(): Struct
     {
         return Struct::define('{{ structName }}', 'Description of {{ structName }}', function (Property $property) {
             $property->string('example_field');
             // Add your fields here
 
             $property->strict(); // All fields required + no additional properties
-        })->toArray();
+        });
     }
 }

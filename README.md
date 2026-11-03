@@ -21,7 +21,7 @@ A Laravel package that provides an elegant, migration-inspired API for defining 
 You can install the package via composer:
 
 ```bash
-composer require blaspsoft/forerunner:^0.3
+composer require blaspsoft/forerunner:^0.4
 ```
 
 > **Note**: This is a pre-release version (0.x). The API may change as we gather feedback and iterate towards 1.0.0.
@@ -54,14 +54,14 @@ use Blaspsoft\Forerunner\Schema\Property;
 
 class UserProfile
 {
-    public static function schema(): array
+    public static function schema(): Struct
     {
         return Struct::define('user_profile', 'Description of user_profile', function (Property $property) {
             $property->string('example_field');
             // Add your fields here
 
             $property->strict(); // All fields required + no additional properties
-        })->toArray();
+        });
     }
 }
 ```
@@ -308,38 +308,21 @@ $property->strict(); // Disallows additional properties AND marks all fields as 
 
 #### Strict Mode for LLM APIs
 
-The `strict()` method is particularly useful for LLM APIs like **OpenAI Structured Outputs** which require:
-
-1. `additionalProperties: false`
-2. All properties in the `required` array
-
-**Important:** Call `strict()` after defining all your fields to ensure all of them are marked as required.
+The `strict()` method marks every field as required and disallows additional properties, at every level of nesting (nested objects and array item objects included). It doesn't matter where in the callback you call it.
 
 ```php
-// Perfect for OpenAI Structured Outputs
-$schema = Struct::define('User', 'A user schema', function (Property $property) {
+$struct = Struct::define('User', 'A user schema', function (Property $property) {
+    $property->strict();
+
     $property->string('fullname');
     $property->email('email');
-    $property->int('age')->min(0)->max(120);
-    $property->string('location');
-
-    // Call strict() at the end to mark all fields as required
-    $property->strict(); // Makes all fields required + disallows extra properties
-})->toArray();
+    $property->object('address', function (Property $address) {
+        $address->string('city'); // also required
+    });
+});
 ```
 
-This generates:
-
-```json
-{
-    "type": "object",
-    "properties": {...},
-    "required": ["fullname", "email", "age", "location"],
-    "additionalProperties": false
-}
-```
-
-> **Note**: By default, `additionalProperties` is already set to `false`. Use `strict()` when you also need all fields to be required (like for OpenAI). Call it after defining fields to ensure all are marked as required.
+When a struct is strict, `toArray()` returns OpenAI's named wrapper (`name`, `description`, `strict`, `schema`) for backwards compatibility. Use `toSchema()` for the plain JSON schema, or one of the [provider methods](#llm-providers) for a ready-to-send payload. You don't need `strict()` for those: each provider method applies that provider's rules itself.
 
 ### Schema Metadata
 
@@ -571,6 +554,68 @@ $schema = Struct::define('BlogPost', 'A blog post with author and comments', fun
 })->toArray();
 ```
 
+## LLM Providers
+
+Each provider has its own structured output format and supports a different subset of JSON Schema. Forerunner builds the payload for you and adjusts the schema to fit.
+
+```php
+$struct = Struct::define('Invoice', 'An invoice', function (Property $property) {
+    $property->string('number')->required();
+    $property->float('total')->min(0)->required();
+    $property->string('notes')->maxLength(500);
+});
+```
+
+| Method | Use it as | What it changes |
+|---|---|---|
+| `toOpenAI()` | Chat Completions `response_format` | Every field becomes required; optional fields become nullable; all objects closed |
+| `toOpenAIResponses()` | Responses API `text.format` | Same as above |
+| `toAnthropic()` | Claude Messages API `output_config.format` | Unsupported constraints (`minimum`, `maxLength`, `minItems`, ...) are moved into the field description; all objects closed |
+| `toAnthropicTool()` | A strict Claude tool definition (`tools[]`) | Same as above |
+| `toGemini()` | Gemini `generationConfig` | Unenforced constraints (`minLength`, `maxLength`, `uniqueItems`) are moved into the field description |
+| `toSchema()` | Anything else | Nothing: the plain JSON schema |
+
+`$schema` and `$id` are left out of provider payloads. Names are made safe for APIs that only accept letters, numbers, `_` and `-`.
+
+### OpenAI
+
+```php
+$response = OpenAI::chat()->create([
+    'model' => 'gpt-5',
+    'messages' => [['role' => 'user', 'content' => 'Extract the invoice...']],
+    'response_format' => $struct->toOpenAI(),
+]);
+```
+
+### Anthropic
+
+```php
+$message = $client->messages->create(
+    model: 'claude-opus-5-5',
+    maxTokens: 16000,
+    messages: [['role' => 'user', 'content' => 'Extract the invoice...']],
+    outputConfig: ['format' => $struct->toAnthropic()],
+);
+```
+
+### Gemini
+
+```php
+Http::withHeaders(['x-goog-api-key' => $key])->post($url, [
+    'contents' => [['parts' => [['text' => 'Extract the invoice...']]]],
+    'generationConfig' => $struct->toGemini(),
+]);
+```
+
+### Choosing a provider at runtime
+
+```php
+use Blaspsoft\Forerunner\Providers\Provider;
+
+$struct->for(Provider::Anthropic);
+$struct->for(config('ai.provider')); // 'openai', 'anthropic' or 'gemini'
+```
+
 ## Working with Generated Schemas
 
 The `Struct::define()` method returns a `Struct` object that can be converted to an array or JSON.
@@ -608,17 +653,18 @@ When using the `make:struct` command, you can create reusable schema classes:
 // In your structure class (generated by make:struct)
 class UserProfile
 {
-    public static function schema(): array
+    public static function schema(): Struct
     {
         return Struct::define('user_profile', 'A user profile schema', function (Property $property) {
             $property->string('name')->required();
             $property->string('email')->required();
-        })->toArray();
+        });
     }
 }
 
 // Using the structure
-$array = UserProfile::schema();  // Returns array
+UserProfile::schema()->toSchema();     // Plain JSON schema array
+UserProfile::schema()->toAnthropic();  // Or any provider payload
 
 // For JSON, use json_encode
 $json = json_encode(UserProfile::schema(), JSON_PRETTY_PRINT);
