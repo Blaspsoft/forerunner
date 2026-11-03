@@ -70,5 +70,5 @@ PropertyBuilder provides constraint methods:
 
 - Service provider: `ForerunnerServiceProvider` (auto-discovered)
 - Config file published via: `php artisan vendor:publish --tag="forerunner-config"`
-- Supports Laravel 11 & 12
+- Supports Laravel 12 & 13
 - PHP 8.2+ required

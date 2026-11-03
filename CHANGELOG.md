@@ -4,6 +4,23 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.3.0 - 2026-11-03
+
+### Added
+
+- **Laravel 13 support** ([#4](https://github.com/Blaspsoft/forerunner/issues/4))
+- **JSON Schema `$id` support**: new `id()` method on `Property` sets the schema's canonical identifier ([#3](https://github.com/Blaspsoft/forerunner/pull/3), thanks @brdv)
+- PHP 8.5 added to the CI matrix
+
+### Removed
+
+- **Laravel 11 support**: Laravel 11 is end-of-life and every release has open security advisories, so Composer no longer installs it by default. Stay on 0.2.x if you need Laravel 11.
+
+### Technical Details
+
+- Pest 3 and 4 are both allowed in dev dependencies (Pest 4 is required for Laravel 13)
+- 122 tests passing with 419 assertions on Laravel 12 and 13
+
 ## 0.2.1 - 2025-01-18
 
 ### Fixed

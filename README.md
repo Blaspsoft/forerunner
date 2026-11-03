@@ -21,7 +21,7 @@ A Laravel package that provides an elegant, migration-inspired API for defining 
 You can install the package via composer:
 
 ```bash
-composer require blaspsoft/forerunner:^0.2
+composer require blaspsoft/forerunner:^0.3
 ```
 
 > **Note**: This is a pre-release version (0.x). The API may change as we gather feedback and iterate towards 1.0.0.
