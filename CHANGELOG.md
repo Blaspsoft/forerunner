@@ -4,6 +4,8 @@ All notable changes to `forerunner` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.4.0 - 2026-11-03
+
 ### Added
 
 - **Provider payloads**: `toOpenAI()`, `toOpenAIResponses()`, `toAnthropic()`, `toAnthropicTool()` and `toGemini()` build each provider's structured output format and adjust the schema to its rules. `for(Provider|string)` picks one at runtime.
