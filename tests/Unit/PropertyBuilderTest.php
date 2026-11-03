@@ -250,6 +250,22 @@ describe('PropertyBuilder', function () {
         expect($schema)->toHaveKey('default', '');
     });
 
+    it('can handle null as default value', function () {
+        $property = new PropertyBuilder('middleName', 'string');
+        $property->nullable()->default(null);
+
+        $schema = $property->toArray();
+
+        expect($schema)->toHaveKey('default')
+            ->and($schema['default'])->toBeNull();
+    });
+
+    it('omits default when none is set', function () {
+        $property = new PropertyBuilder('name', 'string');
+
+        expect($property->toArray())->not->toHaveKey('default');
+    });
+
     it('merges nested builder schema correctly', function () {
         $builder = new Property('user');
         $builder->string('name')->required();
